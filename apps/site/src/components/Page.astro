@@ -2,11 +2,12 @@
 import '../styles/site.css'
 import { HERO_IMAGE_PATHS, site } from '../i18n/site'
 import { REPO, type Locale } from '../lib/store'
+import CloakBodyDemo, { DemoTriggerButton } from './CloakBodyDemo'
 import Download from './Download'
 import Faq from './Faq'
 import FeatureGallery from './FeatureGallery'
-import LiveWorkbench from './LiveWorkbench'
 import { PrimaryButton, VerLine } from './ReleaseLink'
+import ThemeToggle from './ThemeToggle'
 import ThreeDMarquee from './ThreeDMarquee.astro'
 
 interface Props {
@@ -21,12 +22,9 @@ const icon = `${base}/logo.png`
 const ogImage = `${base}/og-image.png`
 const url = new URL(home[lang], Astro.site)
 const heroImages = HERO_IMAGE_PATHS.map((p) => `${base}/${p}`)
-const btn2 =
-  'inline-flex items-center rounded-full border border-page-border-strong bg-page-surface px-6 py-[13px] text-[15px] font-semibold whitespace-nowrap text-page-fg hover:bg-page-elevated'
-const h2 =
-  'm-0 text-[clamp(30px,4vw,46px)] leading-[1.12] font-bold tracking-[-0.02em] text-balance text-page-fg'
-const eyebrow = 'text-[13px] font-semibold tracking-wide text-stealth-mint'
-const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-muted'
+const h2 = 'm-0 text-[clamp(30px,4vw,46px)] leading-[1.12] font-bold tracking-[-0.02em] text-balance text-foreground'
+const eyebrow = 'text-[13px] font-semibold tracking-wide text-muted-foreground'
+const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-muted-foreground'
 ---
 
 <!doctype html>
@@ -47,26 +45,35 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
     <link rel="icon" type="image/png" sizes="32x32" href={`${base}/favicon-32x32.png`} />
     <link rel="icon" type="image/png" sizes="16x16" href={`${base}/favicon-16x16.png`} />
     <link rel="apple-touch-icon" sizes="180x180" href={`${base}/apple-touch-icon.png`} />
+    <script is:inline>
+      ;(() => {
+        try {
+          if (localStorage.getItem('cloak.site.theme') === 'dark') {
+            document.documentElement.classList.add('dark')
+          }
+        } catch {}
+      })()
+    </script>
   </head>
   <body>
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-[#090a0c]"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-primary-foreground"
     >
       Skip to content
     </a>
 
     {
       lang === 'zh' && (
-        <div id="en-hint" hidden class="flex items-center justify-center gap-3 border-b border-page-border bg-page-surface px-4 py-2 text-[13px] text-page-muted">
+        <div id="en-hint" hidden class="flex items-center justify-center gap-3 border-b bg-muted px-4 py-2 text-[13px] text-muted-foreground">
           <span>{s.enHint.text}</span>
-          <a href={home.en} class="font-semibold text-page-fg underline underline-offset-3">
+          <a href={home.en} class="font-semibold text-foreground underline underline-offset-3">
             {s.enHint.link}
           </a>
           <button
             type="button"
             aria-label={s.enHint.close}
-            class="cursor-pointer border-0 bg-transparent px-1 text-[16px] leading-none text-page-subtle hover:text-page-fg"
+            class="cursor-pointer border-0 bg-transparent px-1 text-[16px] leading-none text-muted-foreground hover:text-foreground"
           >
             ×
           </button>
@@ -96,29 +103,28 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
       )
     }
 
-    <header class="sticky top-0 z-40 border-b border-page-border bg-[#090a0c]/85 backdrop-blur-md">
-      <div class="mx-auto flex h-14 max-w-[1400px] items-center gap-7 px-6 max-[480px]:gap-3 max-[480px]:px-4">
-        <a href="#top" class="flex items-center gap-2.5 text-[16px] font-bold tracking-[-0.01em] text-page-fg">
-          <img src={icon} alt="" width="28" height="28" class="block rounded-md bg-white/90 p-0.5" />Cloak
+    <header class="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md">
+      <div class="mx-auto flex h-14 max-w-[1400px] items-center gap-6 px-6 max-[480px]:gap-3 max-[480px]:px-4">
+        <a href="#top" class="flex items-center gap-2.5 text-[16px] font-bold tracking-[-0.01em] text-foreground">
+          <img src={icon} alt="" width="28" height="28" class="block rounded-md" />Cloak
         </a>
-        <nav class="hidden gap-6 text-[14px] text-page-muted min-[820px]:flex">
-          <a href="#workbench" class="text-page-muted hover:text-page-fg">{s.nav.workbench}</a>
-          <a href="#features" class="text-page-muted hover:text-page-fg">{s.nav.features}</a>
-          <a href="#download" class="text-page-muted hover:text-page-fg">{s.nav.download}</a>
-          <a href="#faq" class="text-page-muted hover:text-page-fg">{s.nav.faq}</a>
+        <nav class="hidden gap-6 text-[14px] text-muted-foreground min-[820px]:flex">
+          <a href="#features" class="transition-colors hover:text-foreground">{s.nav.features}</a>
+          <a href="#download" class="transition-colors hover:text-foreground">{s.nav.download}</a>
+          <a href="#faq" class="transition-colors hover:text-foreground">{s.nav.faq}</a>
         </nav>
         <div class="flex-1"></div>
-        <div class="flex rounded-[9px] border border-page-border bg-page-surface p-[3px]">
+        <div class="flex rounded-[9px] bg-muted p-[3px]">
           {
             (['zh', 'en'] as const).map((l) => (
               <a
                 href={home[l]}
                 hreflang={l}
                 class:list={[
-                  'rounded-[6px] px-2.5 py-0.5 text-[13px]',
+                  'rounded-[6px] px-2.5 py-0.5 text-[13px] transition-colors',
                   l === lang
-                    ? 'bg-white font-semibold text-[#090a0c] hover:text-[#090a0c]'
-                    : 'text-page-muted hover:text-page-fg',
+                    ? 'bg-background font-semibold text-foreground shadow-xs'
+                    : 'text-muted-foreground hover:text-foreground',
                 ]}
               >
                 {l === 'zh' ? '中' : 'EN'}
@@ -126,7 +132,11 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
             ))
           }
         </div>
-        <a href={REPO} class="rounded-full border border-page-border-strong bg-page-surface px-3.5 py-[6px] text-[13px] font-medium whitespace-nowrap text-page-fg hover:bg-page-elevated">
+        <ThemeToggle label={s.nav.theme} client:load />
+        <a
+          href={REPO}
+          class="rounded-full border bg-background px-3.5 py-[6px] text-[13px] font-medium whitespace-nowrap text-foreground transition-colors hover:bg-accent"
+        >
           GitHub
         </a>
       </div>
@@ -137,20 +147,20 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
       <section id="top" class="overflow-hidden px-6 pt-12 pb-20 sm:pt-16 max-[480px]:px-4">
         <div class="mx-auto grid max-w-[1400px] items-center gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-12">
           <div class="flex flex-col items-start gap-5 text-left">
-            <div class="flex items-center gap-2 rounded-full border border-page-border bg-page-surface px-3.5 py-1.5 text-[13px] text-page-muted">
-              <span class="size-[7px] shrink-0 rounded-full bg-stealth-mint"></span>
+            <div class="flex items-center gap-2 rounded-full border bg-muted/60 px-3.5 py-1.5 text-[13px] text-muted-foreground">
+              <span class="size-[7px] shrink-0 rounded-full bg-emerald-500"></span>
               {s.hero.badge}
             </div>
-            <h1 class="m-0 text-[clamp(36px,4.2vw,58px)] leading-[1.1] font-bold tracking-[-0.025em] text-balance text-page-fg">
+            <h1 class="m-0 text-[clamp(36px,4.2vw,56px)] leading-[1.1] font-bold tracking-[-0.025em] text-balance text-foreground">
               {s.hero.title[0]}
               <br />
               {s.hero.title[1]}
             </h1>
-            <p class="m-0 max-w-[540px] text-[clamp(16px,1.4vw,18px)] leading-[1.7] text-pretty text-page-muted">{s.hero.lead}</p>
+            <p class="m-0 max-w-[540px] text-[clamp(16px,1.4vw,18px)] leading-[1.7] text-pretty text-muted-foreground">{s.hero.lead}</p>
             <div class="flex flex-wrap gap-2">
               {
                 s.hero.chips.map((chip) => (
-                  <span class="rounded-md border border-page-border bg-page-surface px-2.5 py-1 font-mono text-[12px] text-page-muted">
+                  <span class="rounded-md border bg-muted/50 px-2.5 py-1 font-mono text-[12px] text-muted-foreground">
                     {chip}
                   </span>
                 ))
@@ -158,17 +168,19 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
             </div>
             <div class="mt-2 flex flex-wrap gap-3">
               <PrimaryButton lang={lang} client:load />
-              <a href={REPO} class={btn2}>
-                {s.hero.source}
-              </a>
+              <DemoTriggerButton lang={lang} client:load />
             </div>
-            <div class="flex flex-wrap gap-1.5 text-[13px] text-page-subtle">
+            <div class="flex flex-wrap gap-1.5 text-[13px] text-muted-foreground">
               <span>
                 <VerLine lang={lang} client:load />
               </span>
               <span>·</span>
-              <a href="#download" class="text-page-muted underline underline-offset-3 hover:text-page-fg">
+              <a href="#download" class="text-foreground underline underline-offset-3">
                 {s.hero.other}
+              </a>
+              <span>·</span>
+              <a href={REPO} class="text-muted-foreground hover:text-foreground">
+                {s.hero.source}
               </a>
             </div>
           </div>
@@ -177,23 +189,9 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
         </div>
       </section>
 
-      <!-- Live Real-Component Workbench -->
-      <section id="workbench" class="border-t border-page-border px-6 py-24 max-[480px]:px-4">
-        <div class="mx-auto flex max-w-[1240px] flex-col gap-10">
-          <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
-            <div class="flex max-w-[580px] flex-col gap-3">
-              <div class={eyebrow}>{s.workbench.eyebrow}</div>
-              <h2 class={h2}>{s.workbench.title}</h2>
-            </div>
-            <p class={lead}>{s.workbench.lead}</p>
-          </div>
-          <LiveWorkbench lang={lang} client:load />
-        </div>
-      </section>
-
-      <!-- Asymmetric Bento Features & Real Screenshots -->
-      <section id="features" class="border-t border-page-border bg-[#0c0e12] px-6 py-24 max-[480px]:px-4">
-        <div class="mx-auto flex max-w-[1240px] flex-col gap-12">
+      <!-- 3x2 Equal Grid Features & Real Screenshots -->
+      <section id="features" class="border-t bg-muted/20 px-6 py-24 max-[480px]:px-4">
+        <div class="mx-auto flex max-w-[1280px] flex-col gap-12">
           <div class="flex flex-wrap items-end justify-between gap-x-12 gap-y-5">
             <div class="flex max-w-[560px] flex-col gap-3">
               <div class={eyebrow}>{s.features.eyebrow}</div>
@@ -203,14 +201,14 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
           </div>
           <FeatureGallery lang={lang} base={base} client:visible />
 
-          <div class="mt-4 flex flex-col gap-6 border-t border-page-border pt-12">
-            <h3 class="m-0 text-[22px] font-semibold tracking-[-0.015em] text-page-fg">{s.extras.title}</h3>
+          <div class="mt-4 flex flex-col gap-6 border-t pt-12">
+            <h3 class="m-0 text-[22px] font-semibold tracking-[-0.015em] text-foreground">{s.extras.title}</h3>
             <div class="grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
               {
                 s.extras.items.map(([t, d]) => (
-                  <div class="flex flex-col gap-1.5 border-t border-page-border pt-4">
-                    <span class="text-[15px] font-semibold text-page-fg">{t}</span>
-                    <span class="text-[14px] leading-[1.65] text-pretty text-page-muted">{d}</span>
+                  <div class="flex flex-col gap-1.5 border-t pt-4">
+                    <span class="text-[15px] font-semibold text-foreground">{t}</span>
+                    <span class="text-[14px] leading-[1.65] text-pretty text-muted-foreground">{d}</span>
                   </div>
                 ))
               }
@@ -220,22 +218,22 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
       </section>
 
       <!-- Download -->
-      <section id="download" class="border-t border-page-border px-6 py-24 max-[480px]:px-4">
+      <section id="download" class="border-t px-6 py-24 max-[480px]:px-4">
         <div class="mx-auto flex max-w-[760px] flex-col items-center gap-7 text-center">
           <div class="flex flex-col items-center gap-3.5">
-            <img src={icon} alt="" width="76" height="76" class="block rounded-2xl bg-white/95 p-1" />
+            <img src={icon} alt="" width="76" height="76" class="block rounded-2xl" />
             <h2 class={h2}>{s.download.title}</h2>
-            <a href={`${REPO}/releases`} class="text-[14px] text-page-muted hover:text-page-fg">
+            <a href={`${REPO}/releases`} class="text-[14px] text-muted-foreground hover:text-foreground">
               <VerLine lang={lang} client:load /> · {s.download.all}
             </a>
           </div>
           <Download lang={lang} client:load />
-          <span class="max-w-[560px] text-[13px] leading-[1.65] text-pretty text-page-subtle">{s.download.foot}</span>
+          <span class="max-w-[560px] text-[13px] leading-[1.65] text-pretty text-muted-foreground">{s.download.foot}</span>
         </div>
       </section>
 
       <!-- FAQ with Local Screenshots -->
-      <section id="faq" class="border-t border-page-border bg-[#0c0e12] px-6 py-24 max-[480px]:px-4">
+      <section id="faq" class="border-t bg-muted/20 px-6 py-24 max-[480px]:px-4">
         <div class="mx-auto flex max-w-[800px] flex-col gap-9">
           <h2 class={h2}>{s.faq.title}</h2>
           <Faq lang={lang} base={base} client:visible />
@@ -243,33 +241,36 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
       </section>
 
       <!-- Donate -->
-      <section class="border-t border-page-border px-6 py-24 max-[480px]:px-4">
+      <section class="border-t px-6 py-24 max-[480px]:px-4">
         <div class="mx-auto flex max-w-[760px] flex-col items-center gap-8 text-center">
           <div class="flex flex-col items-center gap-3">
             <div class={eyebrow}>{s.donate.eyebrow}</div>
-            <h2 class="m-0 text-[clamp(28px,3.6vw,40px)] leading-[1.15] font-bold tracking-[-0.02em] text-page-fg">{s.donate.title}</h2>
-            <p class="m-0 max-w-[520px] text-[15px] leading-[1.7] text-pretty text-page-muted">{s.donate.lead}</p>
+            <h2 class="m-0 text-[clamp(28px,3.6vw,40px)] leading-[1.15] font-bold tracking-[-0.02em] text-foreground">{s.donate.title}</h2>
+            <p class="m-0 max-w-[520px] text-[15px] leading-[1.7] text-pretty text-muted-foreground">{s.donate.lead}</p>
           </div>
           <div class="grid w-full max-w-[460px] grid-cols-2 gap-5 max-[480px]:grid-cols-1">
-            <div class="flex flex-col items-center gap-3 rounded-2xl border border-page-border bg-page-surface p-4">
+            <div class="flex flex-col items-center gap-3 rounded-2xl border bg-card p-4">
               <img src={`${base}/alipay.jpg`} alt={s.donate.alipay} width="180" height="180" loading="lazy" class="w-full max-w-[180px] rounded-xl bg-white p-1" />
-              <span class="text-[14px] font-medium text-page-muted">{s.donate.alipay}</span>
+              <span class="text-[14px] font-medium text-muted-foreground">{s.donate.alipay}</span>
             </div>
-            <div class="flex flex-col items-center gap-3 rounded-2xl border border-page-border bg-page-surface p-4">
+            <div class="flex flex-col items-center gap-3 rounded-2xl border bg-card p-4">
               <img src={`${base}/wechat.jpg`} alt={s.donate.wechat} width="180" height="180" loading="lazy" class="w-full max-w-[180px] rounded-xl bg-white p-1" />
-              <span class="text-[14px] font-medium text-page-muted">{s.donate.wechat}</span>
+              <span class="text-[14px] font-medium text-muted-foreground">{s.donate.wechat}</span>
             </div>
           </div>
         </div>
       </section>
 
       <!-- Closing CTA -->
-      <section class="border-t border-page-border bg-[#0c0e12] px-6 py-24 max-[480px]:px-4">
+      <section class="border-t bg-muted/20 px-6 py-24 max-[480px]:px-4">
         <div class="mx-auto flex max-w-[1120px] flex-col items-center gap-6 text-center">
-          <h2 class="m-0 text-[clamp(32px,4.6vw,54px)] leading-[1.1] font-bold tracking-[-0.025em] text-balance text-page-fg">{s.end.title}</h2>
+          <h2 class="m-0 text-[clamp(32px,4.6vw,54px)] leading-[1.1] font-bold tracking-[-0.025em] text-balance text-foreground">{s.end.title}</h2>
           <div class="flex flex-wrap justify-center gap-3">
             <PrimaryButton lang={lang} client:load />
-            <a href={REPO} class={btn2}>
+            <a
+              href={REPO}
+              class="inline-flex items-center rounded-full border bg-background px-6 py-[13px] text-[15px] font-semibold whitespace-nowrap text-foreground transition-colors hover:bg-accent"
+            >
               {s.end.star}
             </a>
           </div>
@@ -277,17 +278,20 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-page-
       </section>
     </main>
 
-    <footer class="border-t border-page-border px-6 pt-7 pb-10 max-[480px]:px-4">
-      <div class="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-7 gap-y-3 text-[13px] text-page-subtle">
-        <span class="font-semibold text-page-fg">Cloak</span>
+    <footer class="border-t px-6 pt-7 pb-10 max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-7 gap-y-3 text-[13px] text-muted-foreground">
+        <span class="font-semibold text-foreground">Cloak</span>
         <span>{s.footer}</span>
         <div class="flex-1"></div>
         <div class="flex gap-5">
-          <a href={REPO} class="text-page-muted hover:text-page-fg">GitHub</a>
-          <a href={`${REPO}/releases`} class="text-page-muted hover:text-page-fg">Releases</a>
-          <a href={`${REPO}/issues`} class="text-page-muted hover:text-page-fg">Issues</a>
+          <a href={REPO} class="hover:text-foreground">GitHub</a>
+          <a href={`${REPO}/releases`} class="hover:text-foreground">Releases</a>
+          <a href={`${REPO}/issues`} class="hover:text-foreground">Issues</a>
         </div>
       </div>
     </footer>
+
+    <!-- Global floating draggable Cloak experience across entire browser body -->
+    <CloakBodyDemo lang={lang} base={base} client:load />
   </body>
 </html>
