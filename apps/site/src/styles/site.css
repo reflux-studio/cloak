@@ -1,0 +1,51 @@
+@import 'tailwindcss';
+
+@theme inline {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Hiragino Sans GB', 'Helvetica Neue', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-subtle: var(--subtle);
+  --color-label: var(--label);
+  --color-divider: var(--divider);
+  --color-brand: oklch(0.45 0.12 250);
+  --color-brand-hover: oklch(0.5 0.14 250);
+  --color-win: oklch(0.55 0.14 155);
+}
+
+:root {
+  --background: #fbfbfa;
+  --foreground: #1d1d1f;
+  --card: #ffffff;
+  --muted: #f1f1ef;
+  --muted-foreground: #86868b;
+  --accent: #f5f5f3;
+  --border: #ebebe9;
+  --input: #e3e3e0;
+  --subtle: #6e6e73;
+  --label: #55555a;
+  --divider: #f3f3f1;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    margin: 0;
+    line-height: normal;
+  }
+  a {
+    @apply text-foreground no-underline hover:text-brand-hover;
+  }
+}

@@ -11,6 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
+.astro
+apps/desktop/dist
+apps/desktop/src-tauri/target
+apps/site/dist
 
 # Editor directories and files
 .vscode/*

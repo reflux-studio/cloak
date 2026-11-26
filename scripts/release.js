@@ -68,16 +68,17 @@ async function main() {
   }
 
   /* -------------------------------- 读取原始文件内容 -------------------------------- */
-  const packageJsonPath = path.join('package.json');
+  const desktopDir = path.join('apps', 'desktop');
+  const packageJsonPath = path.join(desktopDir, 'package.json');
   const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
 
-  const tauriConfPath = path.join('src-tauri', 'tauri.conf.json');
+  const tauriConfPath = path.join(desktopDir, 'src-tauri', 'tauri.conf.json');
   const tauriConf = JSON.parse(readFileSync(tauriConfPath, 'utf8'));
 
-  const cargoTomlPath = path.join('src-tauri', 'Cargo.toml');
+  const cargoTomlPath = path.join(desktopDir, 'src-tauri', 'Cargo.toml');
   const cargoToml = readFileSync(cargoTomlPath, 'utf8');
 
-  const cargoLockFilePath = path.join('src-tauri', 'Cargo.lock');
+  const cargoLockFilePath = path.join(desktopDir, 'src-tauri', 'Cargo.lock');
 
   // 获取旧版本号
   const oldVersion = packageJson.version;

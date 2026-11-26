@@ -1,0 +1,261 @@
+---
+import '../styles/site.css'
+import { site } from '../i18n/site'
+import { REPO, type Locale } from '../lib/store'
+import Download from './Download'
+import Faq from './Faq'
+import FeatureGallery from './FeatureGallery'
+import ReaderPreview from './ReaderPreview'
+import { PrimaryButton, VerLine } from './ReleaseLink'
+
+interface Props {
+  lang: Locale
+}
+
+const { lang } = Astro.props
+const s = site[lang]
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const home = { zh: `${base}/`, en: `${base}/en/` }
+const icon = `${base}/logo.png`
+const ogImage = `${base}/og-image.png`
+const url = new URL(home[lang], Astro.site)
+const btn2 =
+  'inline-flex items-center rounded-full border border-[#d9d9d5] bg-white px-6 py-[13px] text-[16px] font-semibold whitespace-nowrap hover:bg-accent'
+const h2 = 'm-0 text-[clamp(32px,4.4vw,52px)] leading-[1.1] font-bold tracking-[-0.03em] text-balance'
+const eyebrow = 'text-[14px] font-semibold text-brand'
+const lead = 'm-0 max-w-[480px] text-[17px] leading-[1.6] text-pretty text-label'
+---
+
+<!doctype html>
+<html lang={s.meta.htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{s.meta.title}</title>
+    <meta name="description" content={s.meta.description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={url} />
+    <meta property="og:title" content={s.meta.ogTitle} />
+    <meta property="og:description" content={s.meta.ogDescription} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <link rel="canonical" href={url} />
+    <link rel="alternate" hreflang="zh" href={new URL(home.zh, Astro.site)} />
+    <link rel="alternate" hreflang="en" href={new URL(home.en, Astro.site)} />
+    <link rel="icon" type="image/png" sizes="32x32" href={`${base}/favicon-32x32.png`} />
+    <link rel="icon" type="image/png" sizes="16x16" href={`${base}/favicon-16x16.png`} />
+    <link rel="apple-touch-icon" sizes="180x180" href={`${base}/apple-touch-icon.png`} />
+  </head>
+  <body>
+    {
+      lang === 'zh' && (
+        <div id="en-hint" hidden class="flex items-center justify-center gap-3 bg-foreground px-4 py-2 text-[13px] text-white">
+          <span>{s.enHint.text}</span>
+          <a href={home.en} class="font-semibold text-white underline underline-offset-3 hover:text-white">
+            {s.enHint.link}
+          </a>
+          <button
+            type="button"
+            aria-label={s.enHint.close}
+            class="cursor-pointer border-0 bg-transparent px-1 text-[16px] leading-none text-white/70 hover:text-white"
+          >
+            ×
+          </button>
+        </div>
+      )
+    }
+    {
+      lang === 'zh' && (
+        <script is:inline>
+          ;(() => {
+            const K = 'cloak.site.enHintClosed'
+            const el = document.getElementById('en-hint')
+            let closed = false
+            try {
+              closed = localStorage.getItem(K) === '1'
+            } catch {}
+            if (closed || /^zh/i.test(navigator.language || 'zh')) return
+            el.hidden = false
+            el.querySelector('button').onclick = () => {
+              el.hidden = true
+              try {
+                localStorage.setItem(K, '1')
+              } catch {}
+            }
+          })()
+        </script>
+      )
+    }
+
+    <header class="sticky top-0 z-50 border-b bg-[rgba(251,251,250,0.86)] backdrop-blur-[16px] backdrop-saturate-[180%]">
+      <div class="mx-auto flex h-14 max-w-[1120px] items-center gap-7 px-6 max-[480px]:gap-3 max-[480px]:px-4">
+        <a href="#top" class="flex items-center gap-2 text-[17px] font-bold tracking-[-0.01em]">
+          <img src={icon} alt="" width="28" height="28" class="block rounded-md" />Cloak
+        </a>
+        <nav class="hidden gap-[22px] text-[14px] min-[820px]:flex">
+          <a href="#preview">{s.nav.preview}</a>
+          <a href="#features">{s.nav.features}</a>
+          <a href="#download">{s.nav.download}</a>
+          <a href="#faq">{s.nav.faq}</a>
+        </nav>
+        <div class="flex-1"></div>
+        <div class="flex rounded-[9px] bg-muted p-[3px]">
+          {
+            (['zh', 'en'] as const).map((l) => (
+              <a
+                href={home[l]}
+                hreflang={l}
+                class:list={[
+                  'rounded-[7px] px-2.5 py-1 text-[13px] hover:text-foreground',
+                  l === lang && 'bg-white font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.08)]',
+                ]}
+              >
+                {l === 'zh' ? '中' : 'EN'}
+              </a>
+            ))
+          }
+        </div>
+        <a href={REPO} class="rounded-full border border-input bg-white px-3.5 py-[7px] text-[14px] font-medium whitespace-nowrap hover:bg-accent">
+          GitHub
+        </a>
+      </div>
+    </header>
+
+    <section id="top" class="px-6 pt-20 pb-16 max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[1120px] flex-col items-center gap-[22px] text-center">
+        <div class="flex items-center gap-2 rounded-full border bg-white px-3.5 py-1.5 text-[13px] text-label">
+          <span class="size-[7px] shrink-0 rounded-full bg-[oklch(0.55_0.14_155)]"></span>
+          {s.hero.badge}
+        </div>
+        <h1 class="m-0 max-w-[920px] text-[clamp(40px,6.2vw,76px)] leading-[1.08] font-bold tracking-[-0.035em] text-balance">
+          {s.hero.title[0]}
+          <br />
+          {s.hero.title[1]}
+        </h1>
+        <p class="m-0 max-w-[620px] text-[clamp(17px,1.6vw,20px)] leading-[1.6] text-pretty text-label">{s.hero.lead}</p>
+        <div class="mt-1.5 flex flex-wrap justify-center gap-3">
+          <PrimaryButton lang={lang} client:load />
+          <a href={REPO} class={btn2}>
+            {s.hero.source}
+          </a>
+        </div>
+        <div class="flex flex-wrap justify-center gap-1.5 text-[13px] text-subtle">
+          <span>
+            <VerLine lang={lang} client:load />
+          </span>
+          <span>·</span>
+          <a href="#download" class="text-label underline underline-offset-3">
+            {s.hero.other}
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="preview" class="px-6 pb-[110px] max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[1120px] flex-col gap-8">
+        <div class="flex flex-wrap items-end justify-between gap-x-[60px] gap-y-5">
+          <div class="flex max-w-[560px] flex-col gap-3">
+            <div class={eyebrow}>{s.preview.eyebrow}</div>
+            <h2 class={h2}>{s.preview.title}</h2>
+          </div>
+          <p class={lead}>{s.preview.lead}</p>
+        </div>
+        <ReaderPreview lang={lang} client:load />
+      </div>
+    </section>
+
+    <section id="features" class="border-t bg-white px-6 py-[110px] max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[1120px] flex-col gap-12">
+        <div class="flex flex-wrap items-end justify-between gap-x-[60px] gap-y-5">
+          <div class="flex max-w-[560px] flex-col gap-3">
+            <div class={eyebrow}>{s.features.eyebrow}</div>
+            <h2 class={h2}>{s.features.title}</h2>
+          </div>
+          <p class={lead}>{s.features.lead}</p>
+        </div>
+        <FeatureGallery lang={lang} client:visible />
+      </div>
+    </section>
+
+    <section class="border-t px-6 py-[110px] max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[1120px] flex-col gap-9">
+        <h2 class="m-0 text-[clamp(28px,3.6vw,40px)] leading-[1.15] font-bold tracking-[-0.025em]">{s.extras.title}</h2>
+        <div class="grid grid-cols-[repeat(auto-fill,minmax(min(100%,300px),1fr))] gap-px overflow-hidden rounded-2xl border bg-border">
+          {
+            s.extras.items.map(([t, d]) => (
+              <div class="flex flex-col gap-1.5 bg-white p-[22px]">
+                <span class="text-[16px] font-semibold">{t}</span>
+                <span class="text-[14px] leading-[1.6] text-pretty text-label">{d}</span>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="download" class="border-t bg-white px-6 py-[120px] max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[700px] flex-col items-center gap-7 text-center">
+        <div class="flex flex-col items-center gap-3.5">
+          <img src={icon} alt="" width="80" height="80" class="block rounded-2xl" />
+          <h2 class="m-0 text-[clamp(32px,4.4vw,48px)] leading-[1.1] font-bold tracking-[-0.03em]">{s.download.title}</h2>
+          <a href={`${REPO}/releases`} class="text-[14px] text-muted-foreground">
+            <VerLine lang={lang} client:load /> · {s.download.all}
+          </a>
+        </div>
+        <Download lang={lang} client:load />
+        <span class="max-w-[560px] text-[13px] leading-[1.6] text-pretty text-muted-foreground">{s.download.foot}</span>
+      </div>
+    </section>
+
+    <section id="faq" class="px-6 py-[110px] max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[760px] flex-col gap-9">
+        <h2 class="m-0 text-[clamp(32px,4.4vw,52px)] leading-[1.1] font-bold tracking-[-0.03em]">{s.faq.title}</h2>
+        <Faq lang={lang} client:visible />
+      </div>
+    </section>
+
+    <section class="border-t bg-white px-6 py-[110px] max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[760px] flex-col items-center gap-8 text-center">
+        <div class="flex flex-col items-center gap-3">
+          <div class={eyebrow}>{s.donate.eyebrow}</div>
+          <h2 class="m-0 text-[clamp(28px,4vw,42px)] leading-[1.12] font-bold tracking-[-0.03em]">{s.donate.title}</h2>
+          <p class="m-0 max-w-[520px] text-[16px] leading-[1.6] text-pretty text-label">{s.donate.lead}</p>
+        </div>
+        <div class="grid w-full max-w-[460px] grid-cols-2 gap-5 max-[480px]:grid-cols-1">
+          <div class="flex flex-col items-center gap-3 rounded-2xl border bg-background p-4">
+            <img src={`${base}/alipay.jpg`} alt={s.donate.alipay} width="180" height="180" loading="lazy" class="w-full max-w-[180px] rounded-xl border bg-white" />
+            <span class="text-[14px] font-medium text-label">{s.donate.alipay}</span>
+          </div>
+          <div class="flex flex-col items-center gap-3 rounded-2xl border bg-background p-4">
+            <img src={`${base}/wechat.jpg`} alt={s.donate.wechat} width="180" height="180" loading="lazy" class="w-full max-w-[180px] rounded-xl border bg-white" />
+            <span class="text-[14px] font-medium text-label">{s.donate.wechat}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t px-6 py-[110px] max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[1120px] flex-col items-center gap-6 text-center">
+        <h2 class="m-0 text-[clamp(34px,5vw,60px)] leading-[1.08] font-bold tracking-[-0.035em] text-balance">{s.end.title}</h2>
+        <div class="flex flex-wrap justify-center gap-3">
+          <PrimaryButton lang={lang} client:load />
+          <a href={REPO} class={btn2}>
+            {s.end.star}
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="border-t bg-white px-6 pt-7 pb-10 max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[1120px] flex-wrap items-center gap-x-7 gap-y-3 text-[13px] text-subtle">
+        <span class="font-semibold text-foreground">Cloak</span>
+        <span>{s.footer}</span>
+        <div class="flex-1"></div>
+        <div class="flex gap-5">
+          <a href={REPO} class="text-label">GitHub</a>
+          <a href={`${REPO}/releases`} class="text-label">Releases</a>
+          <a href={`${REPO}/issues`} class="text-label">Issues</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
