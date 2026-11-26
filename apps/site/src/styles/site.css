@@ -49,3 +49,36 @@
     @apply text-foreground no-underline hover:text-brand-hover;
   }
 }
+
+@keyframes cloak-marquee-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(80px);
+  }
+}
+
+@keyframes cloak-marquee-down {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-80px);
+  }
+}
+
+.cloak-marquee-col-even {
+  animation: cloak-marquee-up 10s ease-in-out infinite alternate;
+}
+
+.cloak-marquee-col-odd {
+  animation: cloak-marquee-down 15s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloak-marquee-col-even,
+  .cloak-marquee-col-odd {
+    animation: none;
+  }
+}

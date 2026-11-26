@@ -1,0 +1,52 @@
+---
+interface Props {
+  images: string[]
+  class?: string
+}
+
+const { images, class: className = '' } = Astro.props
+const chunkSize = Math.ceil(images.length / 4)
+const chunks = Array.from({ length: 4 }, (_, colIndex) => {
+  const start = colIndex * chunkSize
+  return images.slice(start, start + chunkSize)
+})
+---
+
+<div class={`mx-auto block h-[460px] w-full overflow-hidden rounded-2xl border bg-accent sm:h-[560px] ${className}`}>
+  <div class="flex size-full items-center justify-center">
+    <div class="size-[1720px] shrink-0 scale-50 sm:scale-75 lg:scale-90">
+      <div
+        style="transform: rotateX(55deg) rotateY(0deg) rotateZ(-45deg); transform-style: preserve-3d;"
+        class="relative top-96 right-[50%] grid size-full origin-top-left grid-cols-4 gap-8"
+      >
+        {
+          chunks.map((subarray, colIndex) => (
+            <div class={`relative flex flex-col items-start gap-8 ${colIndex % 2 === 0 ? 'cloak-marquee-col-even' : 'cloak-marquee-col-odd'}`}>
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute -left-4 z-30 h-[calc(100%+80px)] w-px -top-10"
+                style="background: linear-gradient(to bottom, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.18) 50%, transparent 0, transparent); background-size: 1px 5px; mask: linear-gradient(to top, #fff 90%, transparent), linear-gradient(to bottom, #fff 90%, transparent), linear-gradient(#000, #000); mask-composite: exclude;"
+              />
+              {subarray.map((image, imageIndex) => (
+                <div class="relative w-full">
+                  <div
+                    aria-hidden="true"
+                    class="pointer-events-none absolute -top-4 -left-2.5 z-30 h-px w-[calc(100%+20px)]"
+                    style="background: linear-gradient(to right, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.18) 50%, transparent 0, transparent); background-size: 5px 1px; mask: linear-gradient(to left, #fff 90%, transparent), linear-gradient(to right, #fff 90%, transparent), linear-gradient(#000, #000); mask-composite: exclude;"
+                  />
+                  <img
+                    src={image}
+                    alt={`Cloak screenshot ${colIndex * chunkSize + imageIndex + 1}`}
+                    width={970}
+                    height={700}
+                    class="aspect-[970/700] w-full rounded-lg bg-white object-cover ring-1 ring-black/5 transition-transform duration-300 ease-in-out hover:-translate-y-2.5 hover:shadow-2xl"
+                  />
+                </div>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>

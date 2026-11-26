@@ -1,5 +1,27 @@
 import type { AssetKey, Locale, Os } from '../lib/store'
 
+export const HERO_IMAGES: string[] = Array(3)
+  .fill([
+    'https://cos.reflux-studio.cn/public/cloak/hero/novels2.png',
+    'https://cos.reflux-studio.cn/public/cloak/hero/current.png',
+    'https://cos.reflux-studio.cn/public/cloak/hero/update.png',
+    'https://cos.reflux-studio.cn/public/cloak/hero/novels.png',
+    'https://cos.reflux-studio.cn/public/cloak/hero/preference.png',
+    'https://cos.reflux-studio.cn/public/cloak/hero/update.png',
+    'https://cos.reflux-studio.cn/public/cloak/hero/shortcut.png',
+    'https://cos.reflux-studio.cn/public/cloak/hero/window.png',
+    'https://cos.reflux-studio.cn/public/cloak/hero/chapter.png',
+    'https://cos.reflux-studio.cn/public/cloak/hero/preview.png',
+  ])
+  .flat()
+
+export interface ShowcaseTab {
+  key: string
+  label: string
+  caption: string
+  src: string
+}
+
 export interface FeatureItem {
   key: string
   title: string
@@ -34,43 +56,67 @@ const zh = {
     ogDescription: '开源免费的透明桌面阅读器，支持 macOS、Windows、Linux，纯本地离线运行。',
   },
   enHint: { text: 'Cloak 也有英文页面。', link: 'English →', close: '关闭' },
-  nav: { preview: '体验', features: '功能', download: '下载', faq: 'FAQ' },
+  nav: { preview: '实机截图', features: '功能', download: '下载', faq: 'FAQ' },
   hero: {
     badge: '开源免费 · macOS / Windows / Linux · Tauri 2',
-    title: ['把小说藏进工作界面，', '透明，安静，秒隐。'],
-    lead: '一款用 Tauri 2 + Rust 写的轻量级透明桌面阅读器。把半透明阅读窗叠在代码、文档或表格上，敲键盘翻页，老板键一秒隐藏。',
+    title: ['一个透明、隐蔽的', '桌面摸鱼阅读器。'],
+    lead: '如果说摸鱼是一门技术，那么 Cloak 就是摸鱼界的“瑞士军刀”。基于 Tauri 2 + Rust，纯本地离线运行。',
     source: '在 GitHub 上看源码',
     other: '其他平台',
   },
-  preview: {
-    eyebrow: '交互预览',
-    title: '就像本来就长在你的工作软件里。',
-    lead: '调节透明度、字号，或者点一下老板键试试看。在桌面端里，这些全部绑定为全局快捷键，双手不用离开键盘。',
-    editorTab: 'order-service.ts',
-    opacity: '透明度',
-    fontSize: '字号',
-    prev: '上一页',
-    next: '下一页',
-    bossKey: '老板键',
-    hiddenTip: '窗口已隐藏 · 再按一次老板键恢复阅读',
-    restore: '恢复窗口',
-    bookTitle: '第一章 · 幽灵窗',
-    pages: [
-      '屏幕右下角那行小字，透明度刚好压到百分之三十五。背景里还是密密麻麻的 TypeScript 类型定义，谁从工位后面走过去，看到的都只是你在认真排查线上接口。',
-      '右手无名指轻轻搭在方向键上，不需要切窗口，也不用把鼠标移出编辑器。翻页、跳章、调整行距，全部静默完成；非阅读模式下快捷键自动让路，不打扰正常写代码。',
-      '本地 TXT 与 EPUB 自动解析目录并保存阅读进度。没有账号体系，没有云端同步，也不联网上传任何内容——你的小说只留在你自己的电脑里。',
-    ],
-    hint: '提示：在上方试着拖动透明度滑块，或点击「老板键」体验一键隐藏。',
+  showcase: {
+    eyebrow: '实机截图',
+    title: '真实界面与透明效果，一眼看清。',
+    lead: '所有截图均来自 Cloak 真实桌面端：透明阅读窗、本地书库、窗口设置与自动更新一目了然。点击图片可放大查看。',
+    zoomHint: '点击放大',
+    tabs: [
+      {
+        key: 'showcase',
+        label: '透明窗口实录',
+        caption: '透明阅读窗口直接叠加在工作界面上，翻页安静自然',
+        src: 'https://cos.reflux-studio.cn/public/cloak/features/showcase.gif',
+      },
+      {
+        key: 'preview',
+        label: '阅读预览',
+        caption: '文字样式、透明度与阅读效果实时预览',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/preview.png',
+      },
+      {
+        key: 'current',
+        label: '当前阅读',
+        caption: '查看正在阅读的书籍状态与章节进度',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/current.png',
+      },
+      {
+        key: 'novels2',
+        label: '书库管理',
+        caption: '本地导入 TXT / EPUB 电子书，统一管理阅读列表',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/novels2.png',
+      },
+      {
+        key: 'window',
+        label: '窗口设置',
+        caption: '自定义窗口置顶、透明度与 Dock 栏显示策略',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/window.png',
+      },
+      {
+        key: 'update',
+        label: '自动更新',
+        caption: '内置 GitHub Releases 检查与一键更新窗口',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/update.png',
+      },
+    ] as ShowcaseTab[],
   },
   features: {
     eyebrow: '核心功能',
-    title: '专心做好「看小说」这一件事。',
+    title: '摸鱼？我来助你。',
     lead: '没有复杂花哨的冗余设计，每一项能力都围绕桌面摸鱼阅读的真实场景打磨。',
     items: [
       {
         key: 'transparent-window',
         title: '透明悬浮窗口',
-        description: '支持调节窗口透明度和置顶状态，自然融入编辑器、浏览器、文档或聊天窗口，不抢焦点。',
+        description: '随意放置在任何你想伪装成文本的角落，比如代码编辑器、浏览器、文档或聊天窗口，支持置顶与透明度调节。',
         src: 'https://cos.reflux-studio.cn/public/cloak/features/showcase.gif',
       },
       {
@@ -94,12 +140,12 @@ const zh = {
       {
         key: 'hotkeys',
         title: '自定义全局快捷键',
-        description: '翻页、跳章、老板键一键隐藏全都可以自定义，键盘敲得响亮，摸鱼却毫无破绽。',
+        description: '跳章、翻页、老板键一键隐藏全都可以自定义，无需鼠标，键盘敲得嘎嘎响。',
         src: 'https://cos.reflux-studio.cn/public/cloak/hero/shortcut.png',
       },
       {
         key: 'reading-mode',
-        title: '阅读模式与自动更新',
+        title: '阅读模式与偏好设置',
         description: '退出阅读模式后自动释放快捷键，不与日常工作软件冲突；新版本后台检查自动更新。',
         src: 'https://cos.reflux-studio.cn/public/cloak/hero/preference.png',
       },
@@ -161,16 +207,20 @@ const zh = {
         a: ['完全免费，而且已经在 GitHub 开源。不需要注册账号、没有订阅付费，下载后即可直接在本地使用。'],
       },
       {
-        q: 'macOS 打开时提示“无法验证开发者”怎么办？',
+        q: 'macOS 安装和打开应用时提示“无法验证开发者”怎么办？',
         a: [
-          '个人开源项目暂未购买每年 99 美元的 Apple 开发者公证证书，macOS Gatekeeper 会对未公证应用默认拦截。只需在首次打开时放行一次即可：',
+          '由于个人开源项目暂未购买每年 99 美元的 Apple 开发者公证证书，macOS 默认会拦截未签名应用。只需手动信任一次即可正常使用：',
         ],
         steps: [
-          '1. 在弹窗中点击「完成」或「取消」。',
-          '2. 打开「系统设置」→「隐私与安全性」→ 向下滚动找到安全性提示。',
-          '3. 点击「仍要打开」并输入密码确认，之后即可正常启动。',
+          '1. 先在提示弹窗中点击「完成」或「取消」。',
+          '2. 打开「系统设置」→「隐私与安全性」→ 向下滚动到「安全性」。',
+          '3. 点击「仍要打开」后输入设备密码确认，即可正常使用。',
         ],
         images: [
+          {
+            src: 'https://cos.reflux-studio.cn/public/cloak/faq/macos-cannot-verify/dialog.png',
+            alt: 'macOS 无法验证开发者弹窗',
+          },
           {
             src: 'https://cos.reflux-studio.cn/public/cloak/faq/macos-cannot-verify/solution.png',
             alt: 'macOS 仍要打开设置截图',
@@ -178,16 +228,30 @@ const zh = {
         ],
       },
       {
-        q: 'Windows 提示“已阻止此不安全内容 / Windows 已保护你的电脑”怎么办？',
-        a: ['未购买商业代码签名证书的 Windows 安装包通常会触发 SmartScreen 提醒，按下面步骤放行即可：'],
+        q: 'Windows 安装和打开应用时提示“已阻止此不安全内容”怎么办？',
+        a: [
+          '部分 Windows 电脑默认开启了 Microsoft Defender SmartScreen 保护，安装未签名应用时会弹出拦截提示，按以下步骤放行即可：',
+        ],
         steps: [
-          '1. 在 SmartScreen 弹窗中点击「更多信息」。',
-          '2. 点击出现的「仍要运行」按钮继续安装。',
+          '1. 临时放行：在弹窗中点击「更多信息」，随后点击「仍要运行」即可。',
+          '2. 永久放行：打开「设置」→「隐私和安全性」→「应用和浏览器控制」→「基于声誉的保护设置」，关闭对应检查项（Edge 浏览器需在浏览器设置中单独关闭）。',
         ],
         images: [
           {
             src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/dialog.png',
             alt: 'Windows SmartScreen 弹窗',
+          },
+          {
+            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-1.png',
+            alt: 'Windows 基于声誉的保护设置',
+          },
+          {
+            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-2.png',
+            alt: '关闭 SmartScreen 检查项',
+          },
+          {
+            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-3.png',
+            alt: 'Edge 浏览器单独关闭 SmartScreen',
           },
         ],
       },
@@ -224,33 +288,57 @@ const en: typeof zh = {
     ogDescription: 'Free, open-source transparent desktop reader for macOS, Windows, and Linux. 100% local.',
   },
   enHint: { text: 'Cloak is also available in English.', link: 'English →', close: 'Dismiss' },
-  nav: { preview: 'Preview', features: 'Features', download: 'Download', faq: 'FAQ' },
+  nav: { preview: 'Screenshots', features: 'Features', download: 'Download', faq: 'FAQ' },
   hero: {
     badge: 'Open source · macOS / Windows / Linux · Tauri 2',
-    title: ['Hide your reading in plain sight,', 'transparent and instant.'],
-    lead: 'A tiny transparent desktop reader built with Tauri 2 and Rust. Float a subtle text window over your editor or spreadsheet, flip pages from the keyboard, and vanish in one keystroke.',
+    title: ['A transparent, stealth', 'mini desktop reader.'],
+    lead: 'Think of Cloak as the Swiss Army knife of quiet desktop reading. Built with Tauri 2 and Rust, 100% local and offline.',
     source: 'View source on GitHub',
     other: 'Other platforms',
   },
-  preview: {
-    eyebrow: 'Interactive preview',
-    title: 'Blends right into whatever you are working on.',
-    lead: 'Adjust opacity, tweak font size, or hit the Boss Key below. In the desktop app, these bind to global hotkeys so your hands never leave the keyboard.',
-    editorTab: 'order-service.ts',
-    opacity: 'Opacity',
-    fontSize: 'Font size',
-    prev: 'Prev',
-    next: 'Next',
-    bossKey: 'Boss key',
-    hiddenTip: 'Window hidden · press Boss Key again to resume',
-    restore: 'Restore',
-    bookTitle: 'Chapter 1 · Ghost Window',
-    pages: [
-      'Down in the corner of the screen, the text sits at 35% opacity right over dense TypeScript definitions. Anyone walking past your desk only sees you debugging production code.',
-      'Your fingers stay on the arrow keys — no alt-tabbing, no moving the mouse out of the editor. When Reading Mode is off, Cloak releases every shortcut so your normal workflow stays untouched.',
-      'Import local TXT or EPUB files with automatic chapter parsing and progress saving. No accounts, no cloud sync, no network tracking — your books stay strictly on your machine.',
+  showcase: {
+    eyebrow: 'Screenshots',
+    title: 'Real screens from the desktop app.',
+    lead: 'Every screenshot below is captured directly from Cloak: transparent reading overlay, local library, window controls, and built-in updater. Click any image to zoom.',
+    zoomHint: 'Click to zoom',
+    tabs: [
+      {
+        key: 'showcase',
+        label: 'Transparent demo',
+        caption: 'Transparent reader window floating naturally over your workspace',
+        src: 'https://cos.reflux-studio.cn/public/cloak/features/showcase.gif',
+      },
+      {
+        key: 'preview',
+        label: 'Reader preview',
+        caption: 'Live preview of typography, opacity, and styling',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/preview.png',
+      },
+      {
+        key: 'current',
+        label: 'Current book',
+        caption: 'Check active reading status and chapter progress',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/current.png',
+      },
+      {
+        key: 'novels2',
+        label: 'Library',
+        caption: 'Import local TXT / EPUB books and manage your shelf',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/novels2.png',
+      },
+      {
+        key: 'window',
+        label: 'Window settings',
+        caption: 'Configure always-on-top, opacity, and Dock visibility',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/window.png',
+      },
+      {
+        key: 'update',
+        label: 'Auto updater',
+        caption: 'Built-in update check and install dialog backed by GitHub Releases',
+        src: 'https://cos.reflux-studio.cn/public/cloak/hero/update.png',
+      },
     ],
-    hint: 'Tip: drag the opacity slider or press “Boss key” to see it vanish.',
   },
   features: {
     eyebrow: 'Features',
@@ -289,7 +377,7 @@ const en: typeof zh = {
       },
       {
         key: 'reading-mode',
-        title: 'Reading mode & auto-updates',
+        title: 'Reading mode & preferences',
         description: 'Hotkeys stay dormant outside Reading Mode so they never clash with work apps. Updates arrive via GitHub Releases.',
         src: 'https://cos.reflux-studio.cn/public/cloak/hero/preference.png',
       },
@@ -360,6 +448,10 @@ const en: typeof zh = {
         ],
         images: [
           {
+            src: 'https://cos.reflux-studio.cn/public/cloak/faq/macos-cannot-verify/dialog.png',
+            alt: 'macOS Gatekeeper dialog',
+          },
+          {
             src: 'https://cos.reflux-studio.cn/public/cloak/faq/macos-cannot-verify/solution.png',
             alt: 'macOS Open Anyway setting',
           },
@@ -367,12 +459,27 @@ const en: typeof zh = {
       },
       {
         q: 'Windows SmartScreen blocked the installer. Is it safe?',
-        a: ['Unsigned Windows installers trigger SmartScreen until reputation builds up. You can inspect all source code on GitHub and click through once:'],
-        steps: ['1. Click “More info” on the SmartScreen prompt.', '2. Click “Run anyway” to install.'],
+        a: ['Unsigned Windows installers trigger SmartScreen until reputation builds up. You can inspect all source code on GitHub and allow it once:'],
+        steps: [
+          '1. Quick allow: Click “More info” on the SmartScreen prompt, then click “Run anyway”.',
+          '2. Permanent allow: Open Settings → Privacy & security → App & browser control → Reputation-based protection settings and toggle off SmartScreen checks (Edge requires turning it off separately in browser settings).',
+        ],
         images: [
           {
             src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/dialog.png',
             alt: 'Windows SmartScreen dialog',
+          },
+          {
+            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-1.png',
+            alt: 'Windows Reputation-based protection settings',
+          },
+          {
+            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-2.png',
+            alt: 'Disable SmartScreen checks',
+          },
+          {
+            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-3.png',
+            alt: 'Disable SmartScreen in Microsoft Edge',
           },
         ],
       },

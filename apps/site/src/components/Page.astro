@@ -1,12 +1,13 @@
 ---
 import '../styles/site.css'
-import { site } from '../i18n/site'
+import { HERO_IMAGES, site } from '../i18n/site'
 import { REPO, type Locale } from '../lib/store'
 import Download from './Download'
 import Faq from './Faq'
 import FeatureGallery from './FeatureGallery'
-import ReaderPreview from './ReaderPreview'
 import { PrimaryButton, VerLine } from './ReleaseLink'
+import ScreenshotShowcase from './ScreenshotShowcase'
+import ThreeDMarquee from './ThreeDMarquee.astro'
 
 interface Props {
   lang: Locale
@@ -120,46 +121,50 @@ const lead = 'm-0 max-w-[480px] text-[17px] leading-[1.6] text-pretty text-label
       </div>
     </header>
 
-    <section id="top" class="px-6 pt-20 pb-16 max-[480px]:px-4">
-      <div class="mx-auto flex max-w-[1120px] flex-col items-center gap-[22px] text-center">
-        <div class="flex items-center gap-2 rounded-full border bg-white px-3.5 py-1.5 text-[13px] text-label">
-          <span class="size-[7px] shrink-0 rounded-full bg-[oklch(0.55_0.14_155)]"></span>
-          {s.hero.badge}
+    <section id="top" class="overflow-hidden px-6 pt-14 pb-20 sm:pt-20 max-[480px]:px-4">
+      <div class="mx-auto grid max-w-[1120px] items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+        <div class="flex flex-col items-start gap-[22px] text-left">
+          <div class="flex items-center gap-2 rounded-full border bg-white px-3.5 py-1.5 text-[13px] text-label">
+            <span class="size-[7px] shrink-0 rounded-full bg-[oklch(0.55_0.14_155)]"></span>
+            {s.hero.badge}
+          </div>
+          <h1 class="m-0 text-[clamp(36px,4.8vw,58px)] leading-[1.1] font-bold tracking-[-0.035em] text-balance">
+            {s.hero.title[0]}
+            <br />
+            {s.hero.title[1]}
+          </h1>
+          <p class="m-0 max-w-[520px] text-[clamp(16px,1.5vw,19px)] leading-[1.6] text-pretty text-label">{s.hero.lead}</p>
+          <div class="mt-1.5 flex flex-wrap gap-3">
+            <PrimaryButton lang={lang} client:load />
+            <a href={REPO} class={btn2}>
+              {s.hero.source}
+            </a>
+          </div>
+          <div class="flex flex-wrap gap-1.5 text-[13px] text-subtle">
+            <span>
+              <VerLine lang={lang} client:load />
+            </span>
+            <span>·</span>
+            <a href="#download" class="text-label underline underline-offset-3">
+              {s.hero.other}
+            </a>
+          </div>
         </div>
-        <h1 class="m-0 max-w-[920px] text-[clamp(40px,6.2vw,76px)] leading-[1.08] font-bold tracking-[-0.035em] text-balance">
-          {s.hero.title[0]}
-          <br />
-          {s.hero.title[1]}
-        </h1>
-        <p class="m-0 max-w-[620px] text-[clamp(17px,1.6vw,20px)] leading-[1.6] text-pretty text-label">{s.hero.lead}</p>
-        <div class="mt-1.5 flex flex-wrap justify-center gap-3">
-          <PrimaryButton lang={lang} client:load />
-          <a href={REPO} class={btn2}>
-            {s.hero.source}
-          </a>
-        </div>
-        <div class="flex flex-wrap justify-center gap-1.5 text-[13px] text-subtle">
-          <span>
-            <VerLine lang={lang} client:load />
-          </span>
-          <span>·</span>
-          <a href="#download" class="text-label underline underline-offset-3">
-            {s.hero.other}
-          </a>
-        </div>
+
+        <ThreeDMarquee images={HERO_IMAGES} />
       </div>
     </section>
 
-    <section id="preview" class="px-6 pb-[110px] max-[480px]:px-4">
-      <div class="mx-auto flex max-w-[1120px] flex-col gap-8">
+    <section id="preview" class="border-t px-6 py-[110px] max-[480px]:px-4">
+      <div class="mx-auto flex max-w-[1120px] flex-col gap-10">
         <div class="flex flex-wrap items-end justify-between gap-x-[60px] gap-y-5">
           <div class="flex max-w-[560px] flex-col gap-3">
-            <div class={eyebrow}>{s.preview.eyebrow}</div>
-            <h2 class={h2}>{s.preview.title}</h2>
+            <div class={eyebrow}>{s.showcase.eyebrow}</div>
+            <h2 class={h2}>{s.showcase.title}</h2>
           </div>
-          <p class={lead}>{s.preview.lead}</p>
+          <p class={lead}>{s.showcase.lead}</p>
         </div>
-        <ReaderPreview lang={lang} client:load />
+        <ScreenshotShowcase lang={lang} client:load />
       </div>
     </section>
 
