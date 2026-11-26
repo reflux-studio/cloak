@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import {
   BookOpen,
+  ChevronLeft,
   ChevronRight,
   Eye,
   EyeOff,
@@ -43,17 +44,132 @@ interface BookItem {
   chapters: ChapterItem[]
 }
 
+interface WindowRect {
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
+type ResizeDir = 'n' | 's' | 'e' | 'w' | 'nw' | 'ne' | 'sw' | 'se'
+
 const OPEN_EVENT = 'cloak:demo-open'
+
+const RESIZE_ZONES: [ResizeDir, string][] = [
+  ['n', 'inset-x-3 -top-1 h-2 cursor-ns-resize'],
+  ['s', 'inset-x-3 -bottom-1 h-2 cursor-ns-resize'],
+  ['e', 'inset-y-3 -right-1 w-2 cursor-ew-resize'],
+  ['w', 'inset-y-3 -left-1 w-2 cursor-ew-resize'],
+  ['nw', '-top-1 -left-1 size-3 cursor-nwse-resize'],
+  ['ne', '-top-1 -right-1 size-3 cursor-nesw-resize'],
+  ['sw', '-bottom-1 -left-1 size-3 cursor-nesw-resize'],
+  ['se', '-bottom-1 -right-1 size-3.5 cursor-nwse-resize'],
+]
+
+function ResizeHandles({
+  rect,
+  setRect,
+  minW,
+  minH,
+}: {
+  rect: WindowRect
+  setRect: React.Dispatch<React.SetStateAction<WindowRect>>
+  minW: number
+  minH: number
+}) {
+  const startResize = (dir: ResizeDir, e: React.PointerEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const startX = e.clientX
+    const startY = e.clientY
+    const orig = { ...rect }
+
+    const onMove = (ev: PointerEvent) => {
+      const dx = ev.clientX - startX
+      const dy = ev.clientY - startY
+      const vw = window.innerWidth
+      const vh = window.innerHeight
+      let { x, y, w, h } = orig
+
+      if (dir.includes('e')) {
+        w = Math.min(vw - x - 8, Math.max(minW, orig.w + dx))
+      }
+      if (dir.includes('s')) {
+        h = Math.min(vh - y - 8, Math.max(minH, orig.h + dy))
+      }
+      if (dir.includes('w')) {
+        const right = orig.x + orig.w
+        const nextX = Math.max(8, Math.min(orig.x + dx, right - minW))
+        x = nextX
+        w = right - nextX
+      }
+      if (dir.includes('n')) {
+        const bottom = orig.y + orig.h
+        const nextY = Math.max(8, Math.min(orig.y + dy, bottom - minH))
+        y = nextY
+        h = bottom - nextY
+      }
+      setRect({ x, y, w, h })
+    }
+
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+    }
+
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerup', onUp)
+  }
+
+  return (
+    <>
+      {RESIZE_ZONES.map(([dir, cls]) => (
+        <div
+          key={dir}
+          data-resize-handle="true"
+          onPointerDown={(e) => startResize(dir, e)}
+          className={`absolute z-20 touch-none ${cls}`}
+        />
+      ))}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 10 10"
+        className="pointer-events-none absolute right-1 bottom-1 z-20 size-2.5 text-muted-foreground/50"
+      >
+        <path d="M9 1 1 9M9 5 5 9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    </>
+  )
+}
+
+export function HeaderDemoButton({ lang }: { lang: Locale }) {
+  return (
+    <button
+      type="button"
+      onClick={() => window.dispatchEvent(new CustomEvent(OPEN_EVENT))}
+      className="inline-flex cursor-pointer items-center gap-2 rounded-full border bg-background px-3 py-[6px] text-[13px] font-medium whitespace-nowrap text-foreground shadow-2xs transition-colors hover:bg-accent"
+    >
+      <span className="relative flex size-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:animate-none" />
+        <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+      </span>
+      <span>{site[lang].nav.tryLive}</span>
+    </button>
+  )
+}
 
 export function DemoTriggerButton({ lang }: { lang: Locale }) {
   return (
     <button
       type="button"
       onClick={() => window.dispatchEvent(new CustomEvent(OPEN_EVENT))}
-      className="inline-flex cursor-pointer items-center gap-2 rounded-full border bg-background px-6 py-[13px] text-[15px] font-semibold whitespace-nowrap text-foreground shadow-xs transition-colors hover:bg-accent"
+      className="inline-flex cursor-pointer items-center gap-2.5 rounded-full border bg-background px-6 py-[13px] text-[15px] font-semibold whitespace-nowrap text-foreground shadow-xs transition-colors hover:bg-accent"
     >
-      <Eye className="size-4 text-muted-foreground" />
-      {site[lang].hero.tryDemo}
+      <span className="relative flex size-2.5">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:animate-none" />
+        <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500" />
+      </span>
+      <span>{site[lang].hero.tryDemo}</span>
     </button>
   )
 }
@@ -109,6 +225,7 @@ export default function CloakBodyDemo({ lang, base }: { lang: Locale; base: stri
   const D = site[lang].demo
 
   const [active, setActive] = useState(false)
+  const [launcherDismissed, setLauncherDismissed] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(true)
   const [bossHidden, setBossHidden] = useState(false)
   const [isFocus, setIsFocus] = useState(true)
@@ -131,22 +248,28 @@ export default function CloakBodyDemo({ lang, base }: { lang: Locale; base: stri
   const [fontWeight, setFontWeight] = useState('400')
   const [fontColor, setFontColor] = useState('#52525b')
 
-  // Window positions
-  const [readerPos, setReaderPos] = useState({ x: 560, y: 120 })
-  const [settingsPos, setSettingsPos] = useState({ x: 24, y: 88 })
+  // Window rects with position + size (supports 8-way edge resizing)
+  const [readerRect, setReaderRect] = useState<WindowRect>({ x: 560, y: 120, w: 440, h: 150 })
+  const [settingsRect, setSettingsRect] = useState<WindowRect>({ x: 24, y: 88, w: 540, h: 520 })
 
   const readerRef = useRef<HTMLDivElement>(null)
   const settingsRef = useRef<HTMLDivElement>(null)
+  const trayRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const openDemo = useCallback(() => {
     const vw = window.innerWidth
     const vh = window.innerHeight
-    const readerW = Math.min(440, vw - 24)
-    const settingsW = Math.min(540, vw - 24)
-    setReaderPos(clampPos(vw - readerW - 28, Math.max(76, vh - 260), readerW, 180))
-    setSettingsPos(clampPos(24, Math.max(76, vh - 580), settingsW, 500))
+    const rw = Math.min(440, vw - 24)
+    const rh = 156
+    const sw = Math.min(540, vw - 24)
+    const sh = Math.min(520, vh - 110)
+    const rp = clampPos(vw - rw - 28, Math.max(76, vh - rh - 92), rw, rh)
+    const sp = clampPos(24, Math.max(76, vh - sh - 24), sw, sh)
+    setReaderRect({ ...rp, w: rw, h: rh })
+    setSettingsRect({ ...sp, w: sw, h: sh })
     setActive(true)
+    setLauncherDismissed(false)
     setBossHidden(false)
     setSettingsOpen(true)
     setIsFocus(true)
@@ -165,7 +288,7 @@ export default function CloakBodyDemo({ lang, base }: { lang: Locale; base: stri
       const target = e.target as Node
       if (readerRef.current?.contains(target)) {
         setIsFocus(true)
-      } else if (!settingsRef.current?.contains(target)) {
+      } else if (!settingsRef.current?.contains(target) && !trayRef.current?.contains(target)) {
         setIsFocus(false)
       }
     }
@@ -236,17 +359,18 @@ export default function CloakBodyDemo({ lang, base }: { lang: Locale; base: stri
 
   const startDrag = (
     e: React.PointerEvent,
-    pos: { x: number; y: number },
-    setPos: React.Dispatch<React.SetStateAction<{ x: number; y: number }>>,
-    w: number,
-    h: number,
+    rect: WindowRect,
+    setRect: React.Dispatch<React.SetStateAction<WindowRect>>,
   ) => {
-    if ((e.target as HTMLElement).closest('button, input, [role="slider"], [role="switch"]')) return
+    if ((e.target as HTMLElement).closest('button, input, [role="slider"], [role="switch"], [data-resize-handle="true"]')) {
+      return
+    }
     e.preventDefault()
-    const startX = e.clientX - pos.x
-    const startY = e.clientY - pos.y
+    const startX = e.clientX - rect.x
+    const startY = e.clientY - rect.y
     const onMove = (ev: PointerEvent) => {
-      setPos(clampPos(ev.clientX - startX, ev.clientY - startY, w, h))
+      const next = clampPos(ev.clientX - startX, ev.clientY - startY, rect.w, rect.h)
+      setRect((prev) => ({ ...prev, ...next }))
     }
     const onUp = () => {
       window.removeEventListener('pointermove', onMove)
@@ -287,64 +411,127 @@ export default function CloakBodyDemo({ lang, base }: { lang: Locale; base: stri
 
   return (
     <>
-      {/* Persistent compact tray control in bottom-right corner */}
-      <div className="fixed right-5 bottom-5 z-40">
-        {!active ? (
-          <Button
-            onClick={openDemo}
-            size="lg"
-            className="rounded-full shadow-lg"
-          >
-            <img src={`${base}/logo.png`} alt="" width={18} height={18} className="rounded-xs" />
-            <span>{D.fabOpen}</span>
-          </Button>
-        ) : (
-          <div className="flex flex-wrap items-center gap-1.5 rounded-full border bg-background/95 p-1.5 shadow-lg backdrop-blur-md">
-            <span
-              className={cn('ml-2 size-2 rounded-full', readingMode ? 'bg-emerald-500' : 'bg-muted-foreground/40')}
-              title={readingMode ? 'Reading Mode ON' : D.readingOff}
-            />
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-7 rounded-full px-2.5 text-xs"
-              onClick={() => setBossHidden((v) => !v)}
-            >
-              {bossHidden ? <RotateCcw className="mr-1 size-3.5" /> : <EyeOff className="mr-1 size-3.5" />}
-              {bossHidden ? D.trayReaderShow : D.trayReaderHide}
-            </Button>
-            <Button
-              size="sm"
-              variant={settingsOpen ? 'secondary' : 'ghost'}
-              className="h-7 rounded-full px-2.5 text-xs"
-              onClick={() => setSettingsOpen((v) => !v)}
-            >
-              <Settings className="mr-1 size-3.5" />
-              {D.traySettings}
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-7 rounded-full px-2.5 text-xs text-muted-foreground hover:text-foreground"
-              onClick={() => setActive(false)}
-            >
-              <X className="mr-1 size-3.5" />
-              {D.trayExit}
-            </Button>
-          </div>
-        )}
-      </div>
+      {/* Prominent bottom-right launcher or active control tray */}
+      {(!active && !launcherDismissed) || active ? (
+        <div ref={trayRef} className="fixed right-5 bottom-5 z-40">
+          {!active ? (
+            <div className="flex items-center gap-3 rounded-2xl border bg-background/95 p-2 pr-3 shadow-xl backdrop-blur-md">
+              <button
+                type="button"
+                onClick={openDemo}
+                className="flex cursor-pointer items-center gap-3 rounded-xl bg-primary px-3.5 py-2.5 text-left text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                <img src={`${base}/logo.png`} alt="" width={24} height={24} className="shrink-0 rounded-md bg-white p-0.5" />
+                <div className="flex flex-col">
+                  <span className="flex items-center gap-1.5 text-[13px] font-semibold leading-tight">
+                    <span>{D.fabOpen}</span>
+                    <span className="relative flex size-2">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:animate-none" />
+                      <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+                    </span>
+                  </span>
+                  <span className="mt-0.5 text-[11px] opacity-80">{D.fabSub}</span>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLauncherDismissed(true)}
+                aria-label={D.fabDismiss}
+                className="flex size-7 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              >
+                <X className="size-3.5" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center gap-1 rounded-full border bg-background/95 p-1.5 shadow-xl backdrop-blur-md">
+              <span
+                className={cn('ml-2 size-2 rounded-full', readingMode ? 'bg-emerald-500' : 'bg-muted-foreground/40')}
+                title={readingMode ? 'Reading Mode ON' : D.readingOff}
+              />
+              {bossHidden && (
+                <Badge variant="outline" className="mx-1 text-[11px]">
+                  {D.trayBossBadge}
+                </Badge>
+              )}
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 rounded-full p-0"
+                onClick={prevPage}
+                aria-label={D.prevPage}
+              >
+                <ChevronLeft className="size-3.5" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 w-7 rounded-full p-0"
+                onClick={nextPage}
+                aria-label={D.nextPage}
+              >
+                <ChevronRight className="size-3.5" />
+              </Button>
+              <Separator orientation="vertical" className="mx-0.5 h-4" />
+              <Button
+                size="sm"
+                variant={isFocus ? 'secondary' : 'ghost'}
+                className="h-7 rounded-full px-2.5 text-xs"
+                onClick={() => {
+                  setBossHidden(false)
+                  setIsFocus((v) => !v)
+                }}
+              >
+                {isFocus ? D.trayBlur : D.trayFocus}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 rounded-full px-2.5 text-xs"
+                onClick={() => setBossHidden((v) => !v)}
+              >
+                {bossHidden ? <RotateCcw className="mr-1 size-3.5" /> : <EyeOff className="mr-1 size-3.5" />}
+                {bossHidden ? D.trayReaderShow : D.trayReaderHide}
+              </Button>
+              <Button
+                size="sm"
+                variant={settingsOpen ? 'secondary' : 'ghost'}
+                className="h-7 rounded-full px-2.5 text-xs"
+                onClick={() => setSettingsOpen((v) => !v)}
+              >
+                <Settings className="mr-1 size-3.5" />
+                {D.traySettings}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 rounded-full px-2.5 text-xs text-muted-foreground hover:text-foreground"
+                onClick={() => setActive(false)}
+              >
+                <X className="mr-1 size-3.5" />
+                {D.trayExit}
+              </Button>
+            </div>
+          )}
+        </div>
+      ) : null}
 
-      {/* Real draggable Cloak SettingsWindow over browser body */}
+      {/* Real draggable & 8-way resizable Cloak SettingsWindow over browser body */}
       {active && settingsOpen && (
         <div
           ref={settingsRef}
-          style={{ left: `${settingsPos.x}px`, top: `${settingsPos.y}px` }}
-          className="fixed z-50 flex h-[min(520px,calc(100vh-96px))] w-[min(540px,calc(100vw-24px))] flex-col overflow-hidden rounded-xl border bg-background text-foreground shadow-2xl"
+          style={{
+            left: `${settingsRect.x}px`,
+            top: `${settingsRect.y}px`,
+            width: `${settingsRect.w}px`,
+            height: `${settingsRect.h}px`,
+          }}
+          className="fixed z-50 flex flex-col overflow-hidden rounded-xl border bg-background text-foreground shadow-2xl"
         >
+          <ResizeHandles rect={settingsRect} setRect={setSettingsRect} minW={380} minH={360} />
+
           {/* Draggable macOS-style title bar */}
           <div
-            onPointerDown={(e) => startDrag(e, settingsPos, setSettingsPos, 540, 520)}
+            onPointerDown={(e) => startDrag(e, settingsRect, setSettingsRect)}
             className="flex h-10 shrink-0 cursor-grab items-center justify-between border-b bg-muted/40 px-4 select-none active:cursor-grabbing"
           >
             <div className="flex items-center gap-1.5">
@@ -358,7 +545,7 @@ export default function CloakBodyDemo({ lang, base }: { lang: Locale; base: stri
               <span className="size-3 rounded-full bg-emerald-500" />
             </div>
             <span className="text-xs font-medium text-muted-foreground">Cloak</span>
-            <span className="text-[11px] text-muted-foreground">{D.readerDragHint.split('·')[0]}</span>
+            <span className="text-[11px] text-muted-foreground">{D.readerDragHint.split('·')[1]?.trim()}</span>
           </div>
 
           {/* Exact layout from apps/desktop/src/windows/settings/index.tsx */}
@@ -684,17 +871,19 @@ export default function CloakBodyDemo({ lang, base }: { lang: Locale; base: stri
         </div>
       )}
 
-      {/* Real draggable Cloak ReaderWindow floating anywhere over browser body */}
+      {/* Real draggable & 8-way resizable Cloak ReaderWindow floating anywhere over browser body */}
       {active && !bossHidden && (
         <div
           ref={readerRef}
           onPointerDown={(e) => {
             setIsFocus(true)
-            startDrag(e, readerPos, setReaderPos, 440, 140)
+            startDrag(e, readerRect, setReaderRect)
           }}
           style={{
-            left: `${readerPos.x}px`,
-            top: `${readerPos.y}px`,
+            left: `${readerRect.x}px`,
+            top: `${readerRect.y}px`,
+            width: `${readerRect.w}px`,
+            height: `${readerRect.h}px`,
             fontSize: `${fontSize}px`,
             lineHeight,
             fontWeight,
@@ -702,7 +891,7 @@ export default function CloakBodyDemo({ lang, base }: { lang: Locale; base: stri
             letterSpacing: `${letterSpacing}px`,
           }}
           className={cn(
-            'fixed z-50 w-[min(440px,calc(100vw-24px))] cursor-grab rounded border border-dashed p-3 select-none active:cursor-grabbing',
+            'fixed z-50 cursor-grab rounded border border-dashed p-3 select-none active:cursor-grabbing',
             isFocus
               ? 'border-black/20 dark:border-white/25 bg-background shadow-md'
               : transparent
@@ -710,19 +899,23 @@ export default function CloakBodyDemo({ lang, base }: { lang: Locale; base: stri
                 : 'border-transparent bg-background/95 shadow-xs',
           )}
         >
-          <div>{currentChapter.pages[safePageIdx] || D.readerEmpty}</div>
+          {isFocus && <ResizeHandles rect={readerRect} setRect={setReaderRect} minW={220} minH={64} />}
 
-          {isFocus && (
-            <div className="mt-2 text-center text-xs text-muted-foreground tabular-nums">
-              <p className="m-0">{currentChapter.title}</p>
-              <p className="m-0">
-                {globalPage}/{totalPages} ({progress.toFixed(2)}%)
-              </p>
-              <p className="mt-0.5 mb-0 text-[11px] opacity-75">{D.readerDragHint}</p>
-            </div>
-          )}
+          <div className="h-full overflow-hidden">
+            <div>{currentChapter.pages[safePageIdx] || D.readerEmpty}</div>
 
-          {!readingMode && <p className="mt-1 mb-0 text-center text-xs text-destructive">{D.readingOff}</p>}
+            {isFocus && (
+              <div className="mt-2 text-center text-xs text-muted-foreground tabular-nums">
+                <p className="m-0">{currentChapter.title}</p>
+                <p className="m-0">
+                  {globalPage}/{totalPages} ({progress.toFixed(2)}%)
+                </p>
+                <p className="mt-0.5 mb-0 text-[11px] opacity-75">{D.readerDragHint}</p>
+              </div>
+            )}
+
+            {!readingMode && <p className="mt-1 mb-0 text-center text-xs text-destructive">{D.readingOff}</p>}
+          </div>
 
           {/* Exact top-right floating pill from apps/desktop/src/windows/reader/index.tsx */}
           <div

@@ -2,7 +2,7 @@
 import '../styles/site.css'
 import { HERO_IMAGE_PATHS, site } from '../i18n/site'
 import { REPO, type Locale } from '../lib/store'
-import CloakBodyDemo, { DemoTriggerButton } from './CloakBodyDemo'
+import CloakBodyDemo, { DemoTriggerButton, HeaderDemoButton } from './CloakBodyDemo'
 import Download from './Download'
 import Faq from './Faq'
 import FeatureGallery from './FeatureGallery'
@@ -114,6 +114,7 @@ const lead = 'm-0 max-w-[520px] text-[16px] leading-[1.7] text-pretty text-muted
           <a href="#faq" class="transition-colors hover:text-foreground">{s.nav.faq}</a>
         </nav>
         <div class="flex-1"></div>
+        <HeaderDemoButton lang={lang} client:load />
         <div class="flex rounded-[9px] bg-muted p-[3px]">
           {
             (['zh', 'en'] as const).map((l) => (
