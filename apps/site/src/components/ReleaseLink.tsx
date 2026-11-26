@@ -6,7 +6,7 @@ export function PrimaryButton({ lang }: { lang: Locale }) {
   return (
     <a
       href={url(os)}
-      className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-[13px] text-[16px] font-semibold whitespace-nowrap text-white hover:bg-[#3a3a3c] hover:text-white"
+      className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-[13px] text-[15px] font-semibold whitespace-nowrap text-[#090a0c] hover:bg-white/90 hover:text-[#090a0c]"
     >
       {site[lang].download.cta[os]}
     </a>

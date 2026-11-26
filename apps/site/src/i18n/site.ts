@@ -1,32 +1,26 @@
 import type { AssetKey, Locale, Os } from '../lib/store'
 
-export const HERO_IMAGES: string[] = Array(3)
+export const HERO_IMAGE_PATHS: string[] = Array(3)
   .fill([
-    'https://cos.reflux-studio.cn/public/cloak/hero/novels2.png',
-    'https://cos.reflux-studio.cn/public/cloak/hero/current.png',
-    'https://cos.reflux-studio.cn/public/cloak/hero/update.png',
-    'https://cos.reflux-studio.cn/public/cloak/hero/novels.png',
-    'https://cos.reflux-studio.cn/public/cloak/hero/preference.png',
-    'https://cos.reflux-studio.cn/public/cloak/hero/update.png',
-    'https://cos.reflux-studio.cn/public/cloak/hero/shortcut.png',
-    'https://cos.reflux-studio.cn/public/cloak/hero/window.png',
-    'https://cos.reflux-studio.cn/public/cloak/hero/chapter.png',
-    'https://cos.reflux-studio.cn/public/cloak/hero/preview.png',
+    'images/hero/novels2.png',
+    'images/hero/current.png',
+    'images/hero/update.png',
+    'images/hero/novels.png',
+    'images/hero/preference.png',
+    'images/hero/update.png',
+    'images/hero/shortcut.png',
+    'images/hero/window.png',
+    'images/hero/chapter.png',
+    'images/hero/preview.png',
   ])
   .flat()
-
-export interface ShowcaseTab {
-  key: string
-  label: string
-  caption: string
-  src: string
-}
 
 export interface FeatureItem {
   key: string
   title: string
   description: string
   src: string
+  featured?: boolean
 }
 
 export interface FaqItem {
@@ -49,105 +43,191 @@ export interface PlatformInfo {
 const zh = {
   meta: {
     htmlLang: 'zh-CN',
-    title: 'Cloak — 轻量透明的摸鱼阅读器',
+    title: 'Cloak: 轻量透明的摸鱼阅读器',
     description:
       'Cloak 是一款基于 Tauri 2 构建的开源免费桌面端透明阅读器。支持 TXT、EPUB 本地导入、章节解析、自定义排版与老板键一键隐藏，纯本地离线运行。支持 macOS、Windows、Linux。',
-    ogTitle: 'Cloak — 轻量透明的摸鱼阅读器',
+    ogTitle: 'Cloak: 轻量透明的摸鱼阅读器',
     ogDescription: '开源免费的透明桌面阅读器，支持 macOS、Windows、Linux，纯本地离线运行。',
   },
   enHint: { text: 'Cloak 也有英文页面。', link: 'English →', close: '关闭' },
-  nav: { preview: '实机截图', features: '功能', download: '下载', faq: 'FAQ' },
+  nav: { workbench: '实时交互', features: '功能', download: '下载', faq: 'FAQ' },
   hero: {
     badge: '开源免费 · macOS / Windows / Linux · Tauri 2',
-    title: ['一个透明、隐蔽的', '桌面摸鱼阅读器。'],
-    lead: '如果说摸鱼是一门技术，那么 Cloak 就是摸鱼界的“瑞士军刀”。基于 Tauri 2 + Rust，纯本地离线运行。',
-    source: '在 GitHub 上看源码',
+    title: ['把小说藏进工作界面，', '透明、隐蔽、秒隐。'],
+    lead: '基于 Tauri 2 + Rust 构建的轻量级桌面摸鱼阅读器。把透明阅读窗叠在编辑器或文档上，不抢焦点，敲键盘安静翻页，老板键一秒隐藏。',
+    chips: ['Boss Key 秒隐', 'TXT / EPUB 本地导入', '纯离线零联网'],
+    source: '在 GitHub 看源码',
     other: '其他平台',
   },
-  showcase: {
-    eyebrow: '实机截图',
-    title: '真实界面与透明效果，一眼看清。',
-    lead: '所有截图均来自 Cloak 真实桌面端：透明阅读窗、本地书库、窗口设置与自动更新一目了然。点击图片可放大查看。',
-    zoomHint: '点击放大',
-    tabs: [
+  workbench: {
+    eyebrow: '真实组件 · 实时试玩',
+    title: '直接上手操作真实的 Cloak 桌面端。',
+    lead: '下方左侧是 Cloak 设置窗口的真实 React 组件，右侧是悬浮在代码工作区上的透明阅读窗口。你可以切换小说、跳章、调字号、切失焦隐身，或者一键触发老板键。',
+    themeLabel: '应用主题',
+    light: '浅色',
+    dark: '深色',
+    focusOn: '窗口聚焦中（可拖拽/调位置）',
+    focusOff: '失焦阅读态（边框与背景已隐藏）',
+    bossKey: '老板键',
+    bossRestore: '恢复阅读窗',
+    bossHiddenTip: '阅读窗口已通过老板键隐藏',
+    prevPage: '上一页',
+    nextPage: '下一页',
+    tabs: {
+      current: '当前阅读',
+      library: '小说列表',
+      settings: '阅读设置',
+    },
+    currentCard: {
+      badge: '当前阅读',
+      desc: '继续你的阅读之旅',
+      progress: '阅读进度',
+      totalChapters: (n: number) => `共 ${n} 章`,
+      jumpHint: '点击章节立即跳转:',
+      continueBtn: '激活阅读窗',
+    },
+    library: {
+      title: '小说列表',
+      count: (n: number) => `共 ${n} 本本地小说`,
+      importBtn: '导入小说',
+      cols: { novel: '小说', author: '作者', progress: '进度', size: '大小', format: '格式' },
+      reading: '在读',
+      clickHint: '点击任意一行切换当前正在阅读的小说',
+    },
+    settings: {
+      windowTitle: '窗口设置',
+      windowDesc: '自定义阅读窗口行为',
+      transparent: '透明窗口',
+      transparentDesc: '开启后在失焦阅读态下完全透明融进背景',
+      readingMode: '阅读模式',
+      readingModeDesc: '关闭时全局翻页快捷键自动让路，不影响写代码',
+      readingOffTip: '阅读模式未开启',
+      readingTitle: '阅读设置',
+      readingDesc: '实时调整字体参数并同步到右侧阅读窗',
+      fontSize: '字体大小',
+      lineHeight: '行高',
+      letterSpacing: '字间距',
+      fontColor: '字体颜色',
+      noBook: '请从左侧小说列表打开一本小说',
+    },
+    books: [
       {
-        key: 'showcase',
-        label: '透明窗口实录',
-        caption: '透明阅读窗口直接叠加在工作界面上，翻页安静自然',
-        src: 'https://cos.reflux-studio.cn/public/cloak/features/showcase.gif',
+        id: 1,
+        title: '诡秘之主',
+        author: '爱潜水的乌贼',
+        size: '14.2 MB',
+        format: 'EPUB',
+        chapters: [
+          {
+            title: '第一章 绯红',
+            lines: [
+              '痛！好痛！头好痛！光怪陆离的梦境碎裂成片，周明瑞只觉脑袋仿佛被一根烧红的铁钎狠狠搅动了一下。',
+              '他艰难地睁开双眼，视线由模糊逐渐变得清晰，映入眼帘的是暗红色的光芒与带着灰尘的木制书桌。',
+              '空气里浮动着淡淡的煤油味，窗外挂着一轮大得不太正常的绯红之月，安静地照在老旧的墙纸上。',
+            ],
+          },
+          {
+            title: '第二章 情况',
+            lines: [
+              '他在心里默数了三秒，确定这不是熬夜改线上 Bug 产生的幻觉，而是某种更彻底的变故。',
+              '书桌角落摊着一本翻开的笔记，墨迹已经发暗，上面用陌生的花体字记录着前一天晚上的开支。',
+              '窗外传来蒸汽机车低沉的汽笛声，一切细节都真实得让人一时间无法反驳。',
+            ],
+          },
+        ],
       },
       {
-        key: 'preview',
-        label: '阅读预览',
-        caption: '文字样式、透明度与阅读效果实时预览',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/preview.png',
+        id: 2,
+        title: '三体',
+        author: '刘慈欣',
+        size: '2.8 MB',
+        format: 'TXT',
+        chapters: [
+          {
+            title: '第 1 节 科学边界',
+            lines: [
+              '汪淼觉得，眼前的一切都像是一张尚未完全显影的照片，轮廓清晰，细节却透着说不出的诡异。',
+              '在倒计时出现之前，他从来没有怀疑过宏观世界与微观物理之间那道看似坚固的边界。',
+              '夜风吹过寂静的街道，他抬头望向墨黑色的夜空，整个宇宙正以一种无法理解的方式闪烁着。',
+            ],
+          },
+          {
+            title: '第 2 节 台球',
+            lines: [
+              '如果高能加速器里的每一次碰撞都给出截然相反的结果，那物理学就不再是一座大厦，而只是一场魔术。',
+              '丁仪把白色的母球轻轻推向球桌中央的黑球，清脆的撞击声在空荡的房间里回响。',
+              '五次撞击，五种完全一致或者完全荒谬的结果，足以动摇一个人半辈子的信念。',
+            ],
+          },
+        ],
       },
       {
-        key: 'current',
-        label: '当前阅读',
-        caption: '查看正在阅读的书籍状态与章节进度',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/current.png',
+        id: 3,
+        title: 'Unix 编程艺术',
+        author: 'Eric S. Raymond',
+        size: '4.6 MB',
+        format: 'EPUB',
+        chapters: [
+          {
+            title: '第 1 章 哲学: 保持简单',
+            lines: [
+              '简洁的系统并不等于功能贫瘠的系统，恰恰相反，最锋利的工具往往只把一件事做到极致。',
+              '当软件学会克制自己的存在感，使用者反而能够更专注地沉浸在手头真正重要的任务里。',
+              '把复杂留给底层状态机，把安静、直观和可组合的界面留到台前，这就是好工具的共通气质。',
+            ],
+          },
+          {
+            title: '第 2 章 透明性与最小惊奇',
+            lines: [
+              '好的交互不该强迫用户记住冗余规则，每一个动作的结果都应当符合直觉。',
+              '当你按下老板键时，窗口不该带着拖泥带水的淡出动画，它应该在同一毫秒内消失。',
+            ],
+          },
+        ],
       },
-      {
-        key: 'novels2',
-        label: '书库管理',
-        caption: '本地导入 TXT / EPUB 电子书，统一管理阅读列表',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/novels2.png',
-      },
-      {
-        key: 'window',
-        label: '窗口设置',
-        caption: '自定义窗口置顶、透明度与 Dock 栏显示策略',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/window.png',
-      },
-      {
-        key: 'update',
-        label: '自动更新',
-        caption: '内置 GitHub Releases 检查与一键更新窗口',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/update.png',
-      },
-    ] as ShowcaseTab[],
+    ],
   },
   features: {
-    eyebrow: '核心功能',
+    eyebrow: '核心功能 · 实机截图',
     title: '摸鱼？我来助你。',
-    lead: '没有复杂花哨的冗余设计，每一项能力都围绕桌面摸鱼阅读的真实场景打磨。',
+    lead: '没有冗余的后台与广告，所有能力都围绕桌面静默阅读打磨。点击任意截图可放大查看细节。',
     items: [
       {
         key: 'transparent-window',
-        title: '透明悬浮窗口',
-        description: '随意放置在任何你想伪装成文本的角落，比如代码编辑器、浏览器、文档或聊天窗口，支持置顶与透明度调节。',
-        src: 'https://cos.reflux-studio.cn/public/cloak/features/showcase.gif',
+        title: '透明悬浮窗口（实录）',
+        description: '随意放置在任何你想伪装成文本的角落，代码编辑器、浏览器、表格或聊天窗口都能自然融入，支持置顶与透明度调节。',
+        src: 'images/features/showcase.gif',
+        featured: true,
       },
       {
         key: 'local-import',
         title: '本地 TXT / EPUB 导入',
         description: '直接导入本地 TXT 与 EPUB 电子书，自动兼容多种文本编码，无需额外转换格式。',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/novels.png',
+        src: 'images/hero/novels.png',
       },
       {
         key: 'chapter-parsing',
         title: '章节解析与进度记忆',
         description: '自动识别小说目录结构，支持关键词搜章与跳章，每次翻页都会实时保存阅读进度。',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/chapter.png',
+        src: 'images/hero/chapter.png',
       },
       {
         key: 'typography',
         title: '排版样式自由定制',
         description: '字体、字号、字重、行距、字距、每页字数与文字颜色均可按场景精细微调。',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/reading.png',
+        src: 'images/hero/reading.png',
       },
       {
         key: 'hotkeys',
         title: '自定义全局快捷键',
         description: '跳章、翻页、老板键一键隐藏全都可以自定义，无需鼠标，键盘敲得嘎嘎响。',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/shortcut.png',
+        src: 'images/hero/shortcut.png',
       },
       {
         key: 'reading-mode',
         title: '阅读模式与偏好设置',
         description: '退出阅读模式后自动释放快捷键，不与日常工作软件冲突；新版本后台检查自动更新。',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/preference.png',
+        src: 'images/hero/preference.png',
       },
     ] as FeatureItem[],
   },
@@ -218,11 +298,11 @@ const zh = {
         ],
         images: [
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/macos-cannot-verify/dialog.png',
+            src: 'images/faq/macos-cannot-verify/dialog.png',
             alt: 'macOS 无法验证开发者弹窗',
           },
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/macos-cannot-verify/solution.png',
+            src: 'images/faq/macos-cannot-verify/solution.png',
             alt: 'macOS 仍要打开设置截图',
           },
         ],
@@ -238,19 +318,19 @@ const zh = {
         ],
         images: [
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/dialog.png',
+            src: 'images/faq/microsoft-defender-smartscreen/dialog.png',
             alt: 'Windows SmartScreen 弹窗',
           },
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-1.png',
+            src: 'images/faq/microsoft-defender-smartscreen/solution-1.png',
             alt: 'Windows 基于声誉的保护设置',
           },
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-2.png',
+            src: 'images/faq/microsoft-defender-smartscreen/solution-2.png',
             alt: '关闭 SmartScreen 检查项',
           },
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-3.png',
+            src: 'images/faq/microsoft-defender-smartscreen/solution-3.png',
             alt: 'Edge 浏览器单独关闭 SmartScreen',
           },
         ],
@@ -281,105 +361,191 @@ const zh = {
 const en: typeof zh = {
   meta: {
     htmlLang: 'en',
-    title: 'Cloak — Lightweight transparent mini reader',
+    title: 'Cloak: Lightweight transparent mini reader',
     description:
       'Cloak is a free, open-source desktop transparent reader built with Tauri 2. Import local TXT or EPUB files, customize typography and opacity, and hide instantly with a boss key. Available for macOS, Windows, and Linux.',
-    ogTitle: 'Cloak — Lightweight transparent mini reader',
+    ogTitle: 'Cloak: Lightweight transparent mini reader',
     ogDescription: 'Free, open-source transparent desktop reader for macOS, Windows, and Linux. 100% local.',
   },
   enHint: { text: 'Cloak is also available in English.', link: 'English →', close: 'Dismiss' },
-  nav: { preview: 'Screenshots', features: 'Features', download: 'Download', faq: 'FAQ' },
+  nav: { workbench: 'Live UI', features: 'Features', download: 'Download', faq: 'FAQ' },
   hero: {
     badge: 'Open source · macOS / Windows / Linux · Tauri 2',
-    title: ['A transparent, stealth', 'mini desktop reader.'],
-    lead: 'Think of Cloak as the Swiss Army knife of quiet desktop reading. Built with Tauri 2 and Rust, 100% local and offline.',
+    title: ['Hide your reading in plain sight,', 'transparent and instant.'],
+    lead: 'A tiny transparent desktop reader built with Tauri 2 and Rust. Float a subtle text window over your editor or spreadsheet, flip pages from the keyboard, and vanish in one keystroke.',
+    chips: ['Instant Boss Key', 'Local TXT / EPUB', '100% Offline'],
     source: 'View source on GitHub',
     other: 'Other platforms',
   },
-  showcase: {
-    eyebrow: 'Screenshots',
-    title: 'Real screens from the desktop app.',
-    lead: 'Every screenshot below is captured directly from Cloak: transparent reading overlay, local library, window controls, and built-in updater. Click any image to zoom.',
-    zoomHint: 'Click to zoom',
-    tabs: [
+  workbench: {
+    eyebrow: 'Live Desktop Components',
+    title: 'Try Cloak’s real UI components right here.',
+    lead: 'On the left are the actual React components from Cloak’s settings window; on the right is the floating reader window over a code backdrop. Switch books, jump chapters, tweak type, toggle blur stealth, or hit the Boss Key.',
+    themeLabel: 'App theme',
+    light: 'Light',
+    dark: 'Dark',
+    focusOn: 'Window focused (draggable)',
+    focusOff: 'Blurred stealth mode (borderless)',
+    bossKey: 'Boss key',
+    bossRestore: 'Restore reader',
+    bossHiddenTip: 'Reader window hidden via Boss Key',
+    prevPage: 'Prev',
+    nextPage: 'Next',
+    tabs: {
+      current: 'Current',
+      library: 'Library',
+      settings: 'Settings',
+    },
+    currentCard: {
+      badge: 'Reading',
+      desc: 'Continue where you left off',
+      progress: 'Progress',
+      totalChapters: (n) => `${n} chapters`,
+      jumpHint: 'Quick chapter jump:',
+      continueBtn: 'Focus reader',
+    },
+    library: {
+      title: 'Library',
+      count: (n) => `${n} local books`,
+      importBtn: 'Import book',
+      cols: { novel: 'Title', author: 'Author', progress: 'Progress', size: 'Size', format: 'Format' },
+      reading: 'Active',
+      clickHint: 'Click any row to switch the active book in the reader',
+    },
+    settings: {
+      windowTitle: 'Window settings',
+      windowDesc: 'Customize reader window behavior',
+      transparent: 'Transparent window',
+      transparentDesc: 'Blends completely into the backdrop when unfocused',
+      readingMode: 'Reading mode',
+      readingModeDesc: 'Releases global hotkeys when turned off so work apps stay clear',
+      readingOffTip: 'Reading mode is off',
+      readingTitle: 'Typography',
+      readingDesc: 'Adjust text parameters and watch the live reader update',
+      fontSize: 'Font size',
+      lineHeight: 'Line height',
+      letterSpacing: 'Letter spacing',
+      fontColor: 'Text color',
+      noBook: 'Pick a book from the Library tab to start reading',
+    },
+    books: [
       {
-        key: 'showcase',
-        label: 'Transparent demo',
-        caption: 'Transparent reader window floating naturally over your workspace',
-        src: 'https://cos.reflux-studio.cn/public/cloak/features/showcase.gif',
+        id: 1,
+        title: 'Lord of the Mysteries',
+        author: 'Cuttlefish',
+        size: '14.2 MB',
+        format: 'EPUB',
+        chapters: [
+          {
+            title: 'Chapter 1: Crimson',
+            lines: [
+              'Pain! A splitting headache shattered the kaleidoscopic dream as Zhou Mingrui felt a red-hot iron rod stir inside his skull.',
+              'He forced his eyes open. A faint crimson glow washed over a dusty wooden desk and stacks of unfamiliar notebooks.',
+              'Outside the window, a giant crimson moon hung quietly above narrow brick chimneys wrapped in steam.',
+            ],
+          },
+          {
+            title: 'Chapter 2: Situation',
+            lines: [
+              'He counted three seconds in silence, confirming this was not a late-night production debugging hallucination.',
+              'Open on the desk corner lay a ledger written in crisp Hermes script detailing the previous evening’s expenses.',
+              'A distant steam whistle drifted across the street, anchoring every impossible detail in place.',
+            ],
+          },
+        ],
       },
       {
-        key: 'preview',
-        label: 'Reader preview',
-        caption: 'Live preview of typography, opacity, and styling',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/preview.png',
+        id: 2,
+        title: 'The Three-Body Problem',
+        author: 'Liu Cixin',
+        size: '2.8 MB',
+        format: 'TXT',
+        chapters: [
+          {
+            title: 'Section 1: Frontiers of Science',
+            lines: [
+              'Wang Miao felt as if the scene before him were an underdeveloped photograph, sharp in outline yet unsettling in every corner.',
+              'Before the countdown appeared, he had never doubted the boundary between macroscopic order and subatomic truth.',
+              'Overhead, the night sky flickered in silence at a scale no instrument on Earth was built to explain.',
+            ],
+          },
+          {
+            title: 'Section 2: Billiards',
+            lines: [
+              'If every high-energy collision gave contradictory answers, physics ceased to be a cathedral and became sleight of hand.',
+              'Ding Yi rolled the white cue ball across the green felt toward the black sphere at center table.',
+              'Five strikes, five impossible outcomes, enough to overturn half a lifetime of certainty.',
+            ],
+          },
+        ],
       },
       {
-        key: 'current',
-        label: 'Current book',
-        caption: 'Check active reading status and chapter progress',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/current.png',
-      },
-      {
-        key: 'novels2',
-        label: 'Library',
-        caption: 'Import local TXT / EPUB books and manage your shelf',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/novels2.png',
-      },
-      {
-        key: 'window',
-        label: 'Window settings',
-        caption: 'Configure always-on-top, opacity, and Dock visibility',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/window.png',
-      },
-      {
-        key: 'update',
-        label: 'Auto updater',
-        caption: 'Built-in update check and install dialog backed by GitHub Releases',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/update.png',
+        id: 3,
+        title: 'The Art of Unix Programming',
+        author: 'Eric S. Raymond',
+        size: '4.6 MB',
+        format: 'EPUB',
+        chapters: [
+          {
+            title: 'Chapter 1: Keep It Simple',
+            lines: [
+              'Simplicity is not the absence of capability. The sharpest tools do one job cleanly without fighting the user.',
+              'When software knows how to stay out of the way, attention stays on the work that actually matters.',
+              'Keep state machines deterministic under the hood and interfaces quiet on the surface.',
+            ],
+          },
+          {
+            title: 'Chapter 2: Rule of Least Surprise',
+            lines: [
+              'Good interactions never make you memorize ceremonies. Every action behaves the way your fingers expect.',
+              'When you press the boss key, the window should not fade slowly. It should vanish on the same millisecond.',
+            ],
+          },
+        ],
       },
     ],
   },
   features: {
-    eyebrow: 'Features',
+    eyebrow: 'Features & Captures',
     title: 'Built to do one thing cleanly.',
-    lead: 'No bloat, no subscriptions. Everything is tuned for quiet, distraction-free desktop reading.',
+    lead: 'No bloat, no subscriptions, no cloud lock-in. Click any real desktop capture to inspect details.',
     items: [
       {
         key: 'transparent-window',
-        title: 'Transparent floating window',
-        description: 'Fine-tune window transparency and always-on-top behavior to blend naturally into editors, browsers, or documents.',
-        src: 'https://cos.reflux-studio.cn/public/cloak/features/showcase.gif',
+        title: 'Transparent floating window (Live GIF)',
+        description: 'Fine-tune window transparency and always-on-top behavior to blend naturally into editors, browsers, or spreadsheets.',
+        src: 'images/features/showcase.gif',
+        featured: true,
       },
       {
         key: 'local-import',
         title: 'Local TXT / EPUB import',
-        description: 'Import local TXT and EPUB files directly with multi-encoding detection — no manual format conversion needed.',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/novels.png',
+        description: 'Import local TXT and EPUB files directly with multi-encoding detection and zero manual conversion.',
+        src: 'images/hero/novels.png',
       },
       {
         key: 'chapter-parsing',
         title: 'Chapter parsing & progress sync',
         description: 'Automatically extracts chapters, supports instant chapter search and jump, and remembers your exact reading position.',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/chapter.png',
+        src: 'images/hero/chapter.png',
       },
       {
         key: 'typography',
         title: 'Flexible typography',
         description: 'Customize font family, size, weight, line height, letter spacing, page size, and text color for any backdrop.',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/reading.png',
+        src: 'images/hero/reading.png',
       },
       {
         key: 'hotkeys',
         title: 'Custom global hotkeys',
         description: 'Bind your own keys for page turns, chapter jumps, and the instant boss key hide toggle.',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/shortcut.png',
+        src: 'images/hero/shortcut.png',
       },
       {
         key: 'reading-mode',
         title: 'Reading mode & preferences',
         description: 'Hotkeys stay dormant outside Reading Mode so they never clash with work apps. Updates arrive via GitHub Releases.',
-        src: 'https://cos.reflux-studio.cn/public/cloak/hero/preference.png',
+        src: 'images/hero/preference.png',
       },
     ],
   },
@@ -436,7 +602,7 @@ const en: typeof zh = {
     items: [
       {
         q: 'Is Cloak free? Do I need an account?',
-        a: ['Yes — Cloak is completely free and open source on GitHub. No sign-ups, no subscriptions, no paywalls.'],
+        a: ['Yes. Cloak is completely free and open source on GitHub. No sign-ups, no subscriptions, no paywalls.'],
       },
       {
         q: 'macOS says it cannot verify the developer. How do I open it?',
@@ -448,11 +614,11 @@ const en: typeof zh = {
         ],
         images: [
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/macos-cannot-verify/dialog.png',
+            src: 'images/faq/macos-cannot-verify/dialog.png',
             alt: 'macOS Gatekeeper dialog',
           },
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/macos-cannot-verify/solution.png',
+            src: 'images/faq/macos-cannot-verify/solution.png',
             alt: 'macOS Open Anyway setting',
           },
         ],
@@ -466,19 +632,19 @@ const en: typeof zh = {
         ],
         images: [
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/dialog.png',
+            src: 'images/faq/microsoft-defender-smartscreen/dialog.png',
             alt: 'Windows SmartScreen dialog',
           },
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-1.png',
+            src: 'images/faq/microsoft-defender-smartscreen/solution-1.png',
             alt: 'Windows Reputation-based protection settings',
           },
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-2.png',
+            src: 'images/faq/microsoft-defender-smartscreen/solution-2.png',
             alt: 'Disable SmartScreen checks',
           },
           {
-            src: 'https://cos.reflux-studio.cn/public/cloak/faq/microsoft-defender-smartscreen/solution-3.png',
+            src: 'images/faq/microsoft-defender-smartscreen/solution-3.png',
             alt: 'Disable SmartScreen in Microsoft Edge',
           },
         ],
@@ -489,7 +655,7 @@ const en: typeof zh = {
       },
       {
         q: 'Where can I report bugs or request features?',
-        a: ['Please open an issue on the GitHub repository with your OS version and steps to reproduce — PRs are also welcome!'],
+        a: ['Please open an issue on the GitHub repository with your OS version and steps to reproduce. PRs are welcome too!'],
       },
     ],
   },

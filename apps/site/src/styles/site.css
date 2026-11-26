@@ -1,52 +1,140 @@
 @import 'tailwindcss';
+@source '../../../desktop/src/components/ui';
+@custom-variant dark (&:where(.cloak-app-dark, .cloak-app-dark *));
 
 @theme inline {
-  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Hiragino Sans GB', 'Helvetica Neue', sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Outer marketing site tokens (Obsidian Stealth) */
+  --color-page-bg: var(--page-bg);
+  --color-page-surface: var(--page-surface);
+  --color-page-elevated: var(--page-elevated);
+  --color-page-fg: var(--page-fg);
+  --color-page-muted: var(--page-muted);
+  --color-page-subtle: var(--page-subtle);
+  --color-page-border: var(--page-border);
+  --color-page-border-strong: var(--page-border-strong);
+  --color-stealth-mint: var(--stealth-mint);
+
+  /* Desktop UI component tokens (scoped via .cloak-app-light / .cloak-app-dark) */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-input: var(--input);
-  --color-subtle: var(--subtle);
-  --color-label: var(--label);
-  --color-divider: var(--divider);
-  --color-brand: oklch(0.45 0.12 250);
-  --color-brand-hover: oklch(0.5 0.14 250);
-  --color-win: oklch(0.55 0.14 155);
+  --color-ring: var(--ring);
 }
 
 :root {
-  --background: #fbfbfa;
-  --foreground: #1d1d1f;
-  --card: #ffffff;
-  --muted: #f1f1ef;
-  --muted-foreground: #86868b;
-  --accent: #f5f5f3;
-  --border: #ebebe9;
-  --input: #e3e3e0;
-  --subtle: #6e6e73;
-  --label: #55555a;
-  --divider: #f3f3f1;
+  --page-bg: #090a0c;
+  --page-surface: #111317;
+  --page-elevated: #171a20;
+  --page-fg: #f0f1f4;
+  --page-muted: #989ca8;
+  --page-subtle: #6b707d;
+  --page-border: rgba(255, 255, 255, 0.08);
+  --page-border-strong: rgba(255, 255, 255, 0.14);
+  --stealth-mint: oklch(0.74 0.12 168);
+
+  --radius: 0.625rem;
+  --background: #090a0c;
+  --foreground: #f0f1f4;
+  --card: #111317;
+  --card-foreground: #f0f1f4;
+  --popover: #171a20;
+  --popover-foreground: #f0f1f4;
+  --primary: #f0f1f4;
+  --primary-foreground: #090a0c;
+  --secondary: #171a20;
+  --secondary-foreground: #f0f1f4;
+  --muted: #171a20;
+  --muted-foreground: #989ca8;
+  --accent: #1d2028;
+  --accent-foreground: #f0f1f4;
+  --destructive: oklch(0.66 0.2 25);
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.14);
+  --ring: rgba(255, 255, 255, 0.28);
+}
+
+/* Exact tokens from apps/desktop/src/index.css */
+.cloak-app-light {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  color: var(--foreground);
+}
+
+.cloak-app-dark {
+  --radius: 0.625rem;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  color: var(--foreground);
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   html {
     scroll-behavior: smooth;
+    color-scheme: dark;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-page-bg text-page-fg font-sans antialiased;
     margin: 0;
-    line-height: normal;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   a {
-    @apply text-foreground no-underline hover:text-brand-hover;
+    @apply text-page-fg no-underline transition-colors duration-150 hover:text-white;
   }
 }
 

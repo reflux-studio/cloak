@@ -16,27 +16,27 @@ export default function Download({ lang }: { lang: Locale }) {
         opts={D.platforms.map((p) => [p.key, p.name])}
         value={cur}
         onChange={setPick}
-        className="rounded-xl bg-muted p-1"
+        className="rounded-xl border border-page-border bg-page-surface p-1"
         item="rounded-[9px] px-[22px] py-2 text-[14px]"
-        on="bg-white font-semibold text-foreground shadow-[0_1px_3px_rgba(0,0,0,0.1)]"
-        off="bg-transparent text-label"
+        on="bg-white font-semibold text-[#090a0c] shadow-xs"
+        off="bg-transparent text-page-muted hover:text-page-fg"
       />
-      <div className="box-border w-full overflow-hidden rounded-[20px] border bg-background text-left">
+      <div className="box-border w-full overflow-hidden rounded-2xl border border-page-border bg-page-surface text-left">
         <div className="flex flex-wrap items-center gap-4 px-6 py-[22px]">
           <div className="flex min-w-[180px] flex-1 flex-col gap-[3px]">
-            <span className="text-[19px] font-semibold tracking-[-0.01em]">{info.name}</span>
-            <span className="text-[13px] text-muted-foreground">{info.arch}</span>
+            <span className="text-[19px] font-semibold tracking-[-0.01em] text-page-fg">{info.name}</span>
+            <span className="text-[13px] text-page-muted">{info.arch}</span>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <a
               href={url(info.secondaryKey)}
-              className="rounded-full border border-input bg-white px-4 py-2.5 text-[13px] font-medium whitespace-nowrap text-label hover:bg-accent hover:text-foreground"
+              className="rounded-full border border-page-border-strong bg-page-elevated px-4 py-2.5 text-[13px] font-medium whitespace-nowrap text-page-muted hover:bg-white/10 hover:text-page-fg"
             >
               {info.secondaryLabel}
             </a>
             <a
               href={url(cur)}
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-[15px] font-semibold whitespace-nowrap text-white hover:bg-[#3a3a3c] hover:text-white"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-[15px] font-semibold whitespace-nowrap text-[#090a0c] hover:bg-white/90 hover:text-[#090a0c]"
             >
               <svg viewBox="0 0 16 16" width="14" height="14" className="block" aria-hidden="true">
                 <path
@@ -52,9 +52,9 @@ export default function Download({ lang }: { lang: Locale }) {
             </a>
           </div>
         </div>
-        <div className="flex gap-3 border-t bg-white px-6 pt-4 pb-5">
-          <span className="pt-px text-[13px] font-semibold whitespace-nowrap">{D.first}</span>
-          <span className="text-[13px] leading-[1.6] text-pretty text-label">{info.note}</span>
+        <div className="flex gap-3 border-t border-page-border bg-[#0c0e12] px-6 pt-4 pb-5">
+          <span className="pt-px text-[13px] font-semibold whitespace-nowrap text-page-fg">{D.first}</span>
+          <span className="text-[13px] leading-[1.65] text-pretty text-page-muted">{info.note}</span>
         </div>
       </div>
     </>
